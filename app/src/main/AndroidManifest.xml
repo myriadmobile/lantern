@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.myriadmobile.simpleibeacons" >
+
+    <uses-permission android:name="android.permission.BLUETOOTH" android:required="true"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="com.myriadmobile.simpleibeacons.MainActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="beacon_detected_receiver_action"/>
+                <action android:name="beacon_expiration_receiver_action"/>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+
+
+
+        <service android:name="com.myriadmobile.simpleibeacons.BeaconService" >
+            <intent-filter>
+                <action android:name="beacon_expiration_receiver_action_private"/>
+            </intent-filter>
+        </service>
+
+
+
+
+
+
+    </application>
+
+</manifest>
