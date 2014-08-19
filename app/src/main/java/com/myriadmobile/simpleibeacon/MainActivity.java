@@ -62,7 +62,7 @@ public class MainActivity extends Activity {
 
         registerReceiver(receiver, intentFilter);
 
-        BeaconServiceController.startBeaconService(this, 20000, 60000, 5000, 5000);
+        BeaconServiceController.startBeaconService(this, 20000, 60000, 7000, 5000);
 
 
 
