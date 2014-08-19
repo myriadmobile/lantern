@@ -25,7 +25,7 @@ then all beacons will be broadcast.
 How To Use
 ----------
 
-To start scanning for beacon call `BeaconServiceController.startBeaconService(context, scanInterval, expirationInterval, scanTime, fastScanInterval)` for example: 
+To start scanning for beacon call `BeaconServiceController.startBeaconService(context, scanInterval, expirationInterval, scanTime, fastScanInterval, uuidFilter)` for example: 
 
 ```java
 public class MyActivity extends Activity {
