@@ -153,10 +153,6 @@ public class BeaconService extends Service {
         uuidFilter = prefs.getString(BeaconServiceController.UUID_FILTER_PREF, null);
 
 
-        final BluetoothManager bluetoothManager =
-                (BluetoothManager) this.getApplicationContext().getSystemService(Context.BLUETOOTH_SERVICE);
-        bluetoothAdapter = bluetoothManager.getAdapter();
-
         scanHandler = new Handler();
         scanRunnable = new Runnable() {
             @Override
@@ -168,33 +164,39 @@ public class BeaconService extends Service {
             }
         };
 
+        // Callback that is called when the scan find something.
         scanCallback = new BluetoothAdapter.LeScanCallback() {
             @Override
             public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
                 if (LOG_ENABLED) {
                     Log.d(LOG_TAG, "callback");
                 }
+                // Try to make a beacon object, if it comes back null,
+                // then it is not a beacon, so do nothing.
                 Beacon temp = Beacon.fromScanData(scanRecord, rssi, device);
                 if (temp != null) {
-                    if(uuidFilter == null || (uuidFilter.equals(temp.getUuid()))) {
-                        if(!detectedBeacons.contains(temp)) {
+                    // Check if there is a uuid filter, if there isn't continue,
+                    // if there is and it matches the beacon, continue.
+                    if (uuidFilter == null || (uuidFilter.equals(temp.getUuid()))) {
+                        // Check if the beacon is active, if not make it active.
+                        if (!detectedBeacons.contains(temp)) {
                             detectedBeacons.add(temp);
                             sendDetectedBeaconBroadcast(temp);
-                            setupBeaconExpiration(temp);
                         }
+                        // Check if the beacon is active, if it is check if the distance has changed.
+                        // If so, update it and send a new broadcast.
                         else if (detectedBeacons.contains(temp) && rssi != detectedBeacons.get(detectedBeacons.indexOf(temp)).getRssi()) {
                             detectedBeacons.remove(temp);
                             detectedBeacons.add(temp);
                             sendDetectedBeaconBroadcast(temp);
-                            setupBeaconExpiration(temp);
-
                         }
                     }
-
+                    setupBeaconExpiration(temp);
                 }
             }
         };
 
+        // Check if bluetooth is active, if not, stop the service.
         bluetoothAdapter = getBluetoothAdapter();
         if (bluetoothAdapter != null) {
             detectedBeacons = new ArrayList<Beacon>();
@@ -216,9 +218,8 @@ public class BeaconService extends Service {
     private BluetoothAdapter getBluetoothAdapter() {
         final BluetoothManager bluetoothManager =
                 (BluetoothManager) this.getApplicationContext().getSystemService(Context.BLUETOOTH_SERVICE);
-
+        bluetoothAdapter = bluetoothManager.getAdapter();
         if(bluetoothAdapter.isEnabled()) {
-            bluetoothAdapter = bluetoothManager.getAdapter();
             return bluetoothAdapter;
         }
         return null;
@@ -310,6 +311,11 @@ public class BeaconService extends Service {
 
     }
 
+    /**
+     * Receives expiration broadcasta and sends them to the host app.
+     * This is a helper recevier that allows the beacon to be put into a bundle,
+     * since there would be an error if the alarmmanager tried to send it.
+     */
     private class ExpirationReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -330,10 +336,6 @@ public class BeaconService extends Service {
             }
         }
     }
-
-
-
-
 
 
 }
