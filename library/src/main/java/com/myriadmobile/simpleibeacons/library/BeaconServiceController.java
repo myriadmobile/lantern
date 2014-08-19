@@ -33,7 +33,7 @@ public class BeaconServiceController {
     public static final String EXPIRATION_INTERVAL_PREF = "com.myriadmobile.simpleibeacons.expiration_interval";
 
     /**
-     * Tag for uuid interval pref.
+     * Tag for beacon uuid interval pref.
      */
     public static final String UUID_FILTER_PREF = "com.myriadmobile.simpleibeacons.uuid_filter";
 
