@@ -22,7 +22,7 @@ int `fastScanInterval` : The amount of time in milliseconds etween scans while t
 How To Use
 ----------
 
-To start scanning for beacon call `BeaconServiceController.startBeaconService` for example: 
+To start scanning for beacon call `BeaconServiceController.startBeaconService(context, scanInterval, expirationInterval, scanTime, fastScanInterval)` for example: 
 
 ```java
 public class MyActivity extends Activity {
