@@ -109,7 +109,6 @@ public class MainActivity extends Activity {
                     Beacon beacon = extras.getParcelable(BeaconService.BEACON_RECEIVER_EXTRA);
 
                     if (beacons.contains(beacon)) {
-                        Log.d("tester", "gonner");
                         beacons.remove(beacon);
                         adapter.notifyDataSetChanged();
                     }
