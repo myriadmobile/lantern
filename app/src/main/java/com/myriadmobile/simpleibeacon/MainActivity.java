@@ -89,15 +89,12 @@ public class MainActivity extends Activity {
         public void onReceive(Context context, Intent intent) {
 
             Bundle extras = intent.getExtras();
-            if(extras != null) {
-                Log.d("tester", "here");
+            if (extras != null) {
 
-                if(intent.getAction() == BeaconService.BEACON_DETECTED_RECEIVER_ACTION) {
+                if (intent.getAction() == BeaconService.BEACON_DETECTED_RECEIVER_ACTION) {
                     Beacon beacon = extras.getParcelable(BeaconService.BEACON_RECEIVER_EXTRA);
 
-                    Log.d("tester", "there");
-
-                    if(beacons.contains(beacon)) {
+                    if (beacons.contains(beacon)) {
                         beacons.remove(beacon);
                         beacons.add(beacon);
                         adapter.notifyDataSetChanged();
@@ -108,11 +105,10 @@ public class MainActivity extends Activity {
                     adapter.notifyDataSetChanged();
 
 
-
-                } else if(intent.getAction() == BeaconService.BEACON_EXPIRATION_RECEIVER_ACTION) {
+                } else if (intent.getAction() == BeaconService.BEACON_EXPIRATION_RECEIVER_ACTION) {
                     Beacon beacon = extras.getParcelable(BeaconService.BEACON_RECEIVER_EXTRA);
 
-                    if(beacons.contains(beacon)) {
+                    if (beacons.contains(beacon)) {
                         Log.d("tester", "gonner");
                         beacons.remove(beacon);
                         adapter.notifyDataSetChanged();

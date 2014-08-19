@@ -65,8 +65,7 @@ public class BeaconAdapter  extends BaseAdapter {
             holder.rssi = (TextView)convertView.findViewById(R.id.beacon_rssi);
 
             convertView.setTag(holder);
-        }
-        else {
+        } else {
             holder = (ViewHolder) convertView.getTag();
         }
 

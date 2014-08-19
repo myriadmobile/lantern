@@ -169,13 +169,13 @@ public class BeaconService extends Service {
                     Log.d(LOG_TAG, "callback");
                 }
                 Beacon temp = Beacon.fromScanData(scanRecord, rssi, device);
-                if(temp != null) {
+                if (temp != null) {
                     if(!detectedBeacons.contains(temp)) {
                         detectedBeacons.add(temp);
                         sendDetectedBeaconBroadcast(temp);
                         setupBeaconExpiration(temp);
                     }
-                    else if(detectedBeacons.contains(temp) && rssi != detectedBeacons.get(detectedBeacons.indexOf(temp)).getRssi()) {
+                    else if (detectedBeacons.contains(temp) && rssi != detectedBeacons.get(detectedBeacons.indexOf(temp)).getRssi()) {
                         detectedBeacons.remove(temp);
                         detectedBeacons.add(temp);
                         sendDetectedBeaconBroadcast(temp);
@@ -188,7 +188,7 @@ public class BeaconService extends Service {
             }
         };
         bluetoothAdapter = getBluetoothAdapter();
-        if(bluetoothAdapter != null) {
+        if (bluetoothAdapter != null) {
             detectedBeacons = new ArrayList<Beacon>();
             expirationReceiver = new ExpirationReceiver();
             IntentFilter intentFilter = new IntentFilter(BeaconService.BEACON_DETECTED_RECEIVER_ACTION);
@@ -241,23 +241,23 @@ public class BeaconService extends Service {
      * Scans for beacons. Either it is scanning, or waiting to scan.
      */
     private void scanForBeacons() {
-        if(detectedBeacons.size() == 0) {
+        if (detectedBeacons.size() == 0) {
             inFastScanMode = false;
         } else {
             inFastScanMode = true;
         }
         if (scanToggle) {
-            if(LOG_ENABLED)Log.d(LOG_TAG, "scanning toggle true");
+            if (LOG_ENABLED)Log.d(LOG_TAG, "scanning toggle true");
             isScanning = true;
             scanToggle = false;
             bluetoothAdapter.startLeScan(scanCallback);
             scanHandler.postDelayed(scanRunnable, scanTime);
         } else {
-            if(LOG_ENABLED)Log.d(LOG_TAG, "scanning toggle false");
+            if (LOG_ENABLED)Log.d(LOG_TAG, "scanning toggle false");
             isScanning = false;
             scanToggle = true;
             bluetoothAdapter.stopLeScan(scanCallback);
-            if(inFastScanMode) {
+            if (inFastScanMode) {
                 scanHandler.postDelayed(scanRunnable, fastScanInterval);
             } else {
                 scanHandler.postDelayed(scanRunnable, scanInterval);
@@ -270,7 +270,7 @@ public class BeaconService extends Service {
      * @param beacon The beacons to be sent in the broadcast.
      */
     private void sendDetectedBeaconBroadcast(Beacon beacon) {
-        if(LOG_ENABLED)Log.d(LOG_TAG, "broadcast detected");
+        if (LOG_ENABLED)Log.d(LOG_TAG, "broadcast detected");
         Intent intent = new Intent();
         Bundle extras = new Bundle();
         extras.putParcelable(BEACON_RECEIVER_EXTRA, beacon);
@@ -286,7 +286,7 @@ public class BeaconService extends Service {
      * @param beacon The beacon to be sent during the expiration broadcast.
      */
     private void setupBeaconExpiration(Beacon beacon) {
-        if(LOG_ENABLED)Log.d(LOG_TAG, "broadcast expired");
+        if (LOG_ENABLED)Log.d(LOG_TAG, "broadcast expired");
 
         Parcel parcel = Parcel.obtain();
         beacon.writeToParcel(parcel, 0);
@@ -305,7 +305,7 @@ public class BeaconService extends Service {
     private class ExpirationReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(intent.getAction() == BeaconService.BEACON_EXPIRATION_RECEIVER_PRIVATE) {
+            if (intent.getAction() == BeaconService.BEACON_EXPIRATION_RECEIVER_PRIVATE) {
                 byte[] byteArrayExtra = intent.getByteArrayExtra(BeaconService.BEACON_RECEIVER_EXTRA);
                 Parcel parcel = Parcel.obtain();
                 parcel.unmarshall(byteArrayExtra, 0, byteArrayExtra.length);
