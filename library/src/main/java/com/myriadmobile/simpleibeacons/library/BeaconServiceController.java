@@ -12,14 +12,14 @@ import android.preference.PreferenceManager;
  */
 public class BeaconServiceController {
 
-    public static final String SCAN_INTERVAL_PREF = "com.usolu.ibeaconservice.scan_interval";
-    public static final String SCAN_TIME_PREF = "com.usolu.ibeaconservice.scan_time";
-    public static final String FAST_SCAN_INTERVAL_PREF = "com.usolu.ibeaconservice.fast_scan_interval";
-    public static final String EXPIRATION_INTERVAL_PREF = "com.usolu.ibeaconservice.expiration_interval";
+    public static final String SCAN_INTERVAL_PREF = "com.myriadmobile.simpleibeacons.scan_interval";
+    public static final String SCAN_TIME_PREF = "com.myriadmobile.simpleibeacons.scan_time";
+    public static final String FAST_SCAN_INTERVAL_PREF = "com.myriadmobile.simpleibeacons.fast_scan_interval";
+    public static final String EXPIRATION_INTERVAL_PREF = "com.myriadmobile.simpleibeacons.expiration_interval";
 
     public static void startBeaconService(Context context, int scanInterval, int expirationInterval, int scanTime, int fastScanInterval) {
-        if(context == null) {
-            throw new IllegalArgumentException("Context cannot be null you fool.");
+        if (context == null) {
+            throw new IllegalArgumentException("Context cannot be null.");
         }
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         prefs.edit().putInt(SCAN_INTERVAL_PREF, scanInterval).apply();
@@ -33,7 +33,7 @@ public class BeaconServiceController {
 
     public static void stopBeaconService(Context context){
         if(context == null) {
-            throw new IllegalArgumentException("Context cannot be null you fool.");
+            throw new IllegalArgumentException("Context cannot be null");
         }
         Intent stopService = new Intent(context, BeaconService.class);
         context.stopService(stopService);

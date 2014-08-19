@@ -182,7 +182,7 @@ public class Beacon implements Parcelable {
      * @param txPower The calibrated tx power of a beacon.
      * @return The distance calculated of the beacon.
      */
-    protected static double calculateDistance(int txPower, double rssi) {
+    public static double calculateDistance(int txPower, double rssi) {
         if (rssi == 0) {
             return -1.0;
         }
@@ -202,7 +202,7 @@ public class Beacon implements Parcelable {
      * @param distance The distance of the beacon.
      * @return The proximity that was calculated.
      */
-    protected static int calculateProximity(double distance) {
+    public static int calculateProximity(double distance) {
         if (distance < 0) {
             return PROXIMITY_UNKNOWN;
         }
@@ -262,8 +262,7 @@ public class Beacon implements Parcelable {
         int startByte = 2;
         boolean patternFound = false;
         while (startByte <= 5) {
-            if (((int)scanData[startByte+2] & 0xff) == 0x02 &&
-                    ((int)scanData[startByte+3] & 0xff) == 0x15) {
+            if (((int)scanData[startByte+2] & 0xff) == 0x02 && ((int)scanData[startByte+3] & 0xff) == 0x15) {
                 patternFound = true;
                 break;
             }
