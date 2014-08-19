@@ -108,6 +108,11 @@ public class BeaconService extends Service {
     private int scanTime;
 
     /**
+     * If not null, only send broadcasts for beacons that have this uuid.
+     */
+    private String uuidFilter;
+
+    /**
      * The time in milliseconds that a beacon will remain active since the last time it was detected.
      */
     private int expirationInterval;
@@ -145,6 +150,7 @@ public class BeaconService extends Service {
         expirationInterval = prefs.getInt(BeaconServiceController.EXPIRATION_INTERVAL_PREF, 60000);
         fastScanInterval = prefs.getInt(BeaconServiceController.FAST_SCAN_INTERVAL_PREF, 5000);
         scanTime = prefs.getInt(BeaconServiceController.SCAN_TIME_PREF, 5000);
+        uuidFilter = prefs.getString(BeaconServiceController.UUID_FILTER_PREF, null);
 
 
         final BluetoothManager bluetoothManager =
@@ -170,23 +176,25 @@ public class BeaconService extends Service {
                 }
                 Beacon temp = Beacon.fromScanData(scanRecord, rssi, device);
                 if (temp != null) {
-                    if(!detectedBeacons.contains(temp)) {
-                        detectedBeacons.add(temp);
-                        sendDetectedBeaconBroadcast(temp);
-                        setupBeaconExpiration(temp);
-                    }
-                    else if (detectedBeacons.contains(temp) && rssi != detectedBeacons.get(detectedBeacons.indexOf(temp)).getRssi()) {
-                        detectedBeacons.remove(temp);
-                        detectedBeacons.add(temp);
-                        sendDetectedBeaconBroadcast(temp);
-                        setupBeaconExpiration(temp);
+                    if(uuidFilter == null || (uuidFilter.equals(temp.getUuid()))) {
+                        if(!detectedBeacons.contains(temp)) {
+                            detectedBeacons.add(temp);
+                            sendDetectedBeaconBroadcast(temp);
+                            setupBeaconExpiration(temp);
+                        }
+                        else if (detectedBeacons.contains(temp) && rssi != detectedBeacons.get(detectedBeacons.indexOf(temp)).getRssi()) {
+                            detectedBeacons.remove(temp);
+                            detectedBeacons.add(temp);
+                            sendDetectedBeaconBroadcast(temp);
+                            setupBeaconExpiration(temp);
 
+                        }
                     }
+
                 }
-
-
             }
         };
+
         bluetoothAdapter = getBluetoothAdapter();
         if (bluetoothAdapter != null) {
             detectedBeacons = new ArrayList<Beacon>();

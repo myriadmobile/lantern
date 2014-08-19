@@ -62,9 +62,7 @@ public class MainActivity extends Activity {
 
         registerReceiver(receiver, intentFilter);
 
-        BeaconServiceController.startBeaconService(this, 20000, 60000, 5000, 5000);
-
-
+        BeaconServiceController.startBeaconService(this, 20000, 60000, 5000, 5000, null);
 
     }
 
@@ -87,13 +85,11 @@ public class MainActivity extends Activity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-
             Bundle extras = intent.getExtras();
             if (extras != null) {
 
                 if (intent.getAction() == BeaconService.BEACON_DETECTED_RECEIVER_ACTION) {
                     Beacon beacon = extras.getParcelable(BeaconService.BEACON_RECEIVER_EXTRA);
-
                     if (beacons.contains(beacon)) {
                         beacons.remove(beacon);
                         beacons.add(beacon);
@@ -109,7 +105,7 @@ public class MainActivity extends Activity {
                     Beacon beacon = extras.getParcelable(BeaconService.BEACON_RECEIVER_EXTRA);
 
                     if (beacons.contains(beacon)) {
-                        Log.d("tester", "gonner");
+
                         beacons.remove(beacon);
                         adapter.notifyDataSetChanged();
                     }
