@@ -19,10 +19,13 @@ int `scanTime` : The amount of time in milliseconds a scan will take.
 
 int `fastScanInterval` : The amount of time in milliseconds etween scans while there is an active beacon.
 
+String `uuidFilter` : A string that filters which beacons that are detected are broadcast. If this value is null,
+then all beacons will be broadcast.
+
 How To Use
 ----------
 
-To start scanning for beacon call `BeaconServiceController.startBeaconService(context, scanInterval, expirationInterval, scanTime, fastScanInterval)` for example: 
+To start scanning for beacon call `BeaconServiceController.startBeaconService(context, scanInterval, expirationInterval, scanTime, fastScanInterval, uuidFilter)` for example: 
 
 ```java
 public class MyActivity extends Activity {
@@ -30,7 +33,7 @@ public class MyActivity extends Activity {
     public void onCreate() {
         super.onCreate();
 
-        BeaconServiceController.startBeaconService(this, 20000, 60000, 7000, 5000);
+        BeaconServiceController.startBeaconService(this, 20000, 60000, 7000, 5000, null);
     }
 }
 ```
