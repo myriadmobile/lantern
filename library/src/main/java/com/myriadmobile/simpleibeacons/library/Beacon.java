@@ -173,7 +173,9 @@ public class Beacon implements Parcelable {
             return false;
         }
         Beacon thatBeacon = (Beacon) that;
-        return (thatBeacon.getMajor() == this.getMajor() && thatBeacon.getMinor() == this.getMinor() && thatBeacon.getUuid().equals(this.getUuid()));
+        return (thatBeacon.getMajor() == this.getMajor() &&
+                thatBeacon.getMinor() == this.getMinor() &&
+                thatBeacon.getUuid().equals(this.getUuid()));
     }
 
     /**
