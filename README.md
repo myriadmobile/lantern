@@ -97,6 +97,7 @@ public class BeaconReceiver extends BroadcastReceiver {
         if (extras != null) {
             if (intent.getAction() == BeaconService.BEACON_DETECTED_RECEIVER_ACTION) {
                 Beacon beacon = extras.getParcelable(BeaconService.BEACON_RECEIVER_EXTRA);
+                // Do something.
             } 
         }
     }
@@ -131,8 +132,59 @@ public class BeaconExpirationReceiver extends BroadcastReceiver {
         if (extras != null) {
             if (intent.getAction() == BeaconService.BEACON_EXPIRATION_RECEIVER_ACTION) {
                 Beacon beacon = extras.getParcelable(BeaconService.BEACON_RECEIVER_EXTRA);
+                // Do something.
             } 
         }
     }
 }
+```
+
+Getting Service Status Changes
+-------------------------------
+
+In order to be notified when the beacon scan service status has changed,
+a broadcast receiver must be registered, and listening for the action `BeaconService.BEACON_SERVICE_STATUS_ACTION` . 
+When the broadcast receiver has been called, the the status code can be retrieved with the 
+the tag `BeaconService.BEACON_SERVICE_STATUS_CHANGE_EXTRA` . That code can be compared with the following constants:
+`BeaconService.BEACON_STATUS_OFF` - The service has been turned off.
+`BeaconService.BEACON_STATUS_SCANNING` - The service is in normal scan mode.
+`BeaconService.BEACON_STATUS_FAST_SCANNING` - The service is in fast scan mode.
+`BeaconService.BEACON_STATUS_NOT_SCANNING` - The service is active, but is in the interval between scans.
+
+Example of obtaining the status of the beacon scan service:
+
+```java
+...
+ServiceStatusReceiver statusReceiver = new ServiceStatusReceiver();
+
+IntentFilter statusIntentFilter = new IntentFilter(BeaconService.BEACON_SERVICE_STATUS_ACTION);
+registerReceiver(statusReceiver, statusIntentFilter);
+...
+
+public class ServiceStatusReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle extras = intent.getExtras();
+            if (extras != null) {
+                if (intent.getAction() == BeaconService.BEACON_SERVICE_STATUS_ACTION) {
+                    int beaconStatus = extras.getInt(BeaconService.BEACON_SERVICE_STATUS_CHANGE_EXTRA);
+                        switch (beaconStatus) {
+                            case BeaconService.BEACON_STATUS_OFF:
+                                // Do something.
+                                break;
+                            case BeaconService.BEACON_STATUS_SCANNING:
+                                // Do something.
+                                break;
+                            case BeaconService.BEACON_STATUS_FAST_SCANNING:
+                                // Do something.
+                                break;
+                            case BeaconService.BEACON_STATUS_NOT_SCANNING:
+                                // Do something.
+                                break;
+                        }
+                }
+            }
+        }
+    }
 ```
