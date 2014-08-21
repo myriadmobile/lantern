@@ -72,9 +72,39 @@ public class BeaconService extends Service {
     public static final String BEACON_EXPIRATION_RECEIVER_ACTION = "beacon_expiration_receiver_action";
 
     /**
+     * Tag for when the service status changes.
+     */
+    public static final String BEACON_SERVICE_STATUS_ACTION = "beacon_service_status_action";
+
+    /**
      * Tag to get beacon out of extras.
      */
     public static final String BEACON_RECEIVER_EXTRA = "beacon_receiver_extra";
+
+    /**
+     * Tag to get beacon out of extras.
+     */
+    public static final String BEACON_SERVICE_STATUS_CHANGE_EXTRA = "beacon_service_status_change_extra";
+
+    /**
+     * Tag for when the service is turned off status broadcast.
+     */
+    public static final int BEACON_STATUS_OFF = 0;
+
+    /**
+     * Tag for when the service is scanning status broadcast.
+     */
+    public static final int BEACON_STATUS_SCANNING = 1;
+
+    /**
+     * Tag for when the service is fast scanning status broadcast.
+     */
+    public static final int BEACON_STATUS_FAST_SCANNING = 2;
+
+    /**
+     * Tag for when the service is not scanning status broadcast.
+     */
+    public static final int BEACON_STATUS_NOT_SCANNING = 3;
 
     /**
      * The device's bluetooth adapter.
@@ -261,12 +291,36 @@ public class BeaconService extends Service {
         unregisterReceiver(expirationReceiver);
         bluetoothAdapter.stopLeScan(scanCallback);
         scanHandler.removeCallbacksAndMessages(null);
-
+        sendStatusBroadcast(BEACON_STATUS_OFF);
     }
 
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    /**
+     * Sends a broadcast with the status of the service.
+     * @param broadcastType The status of the service.
+     */
+    private void sendStatusBroadcast(int broadcastType) {
+        Intent broadcastIntent = new Intent();
+        broadcastIntent.setAction(BEACON_SERVICE_STATUS_ACTION);
+        switch (broadcastType) {
+            case BEACON_STATUS_OFF:
+                broadcastIntent.putExtra(BEACON_SERVICE_STATUS_CHANGE_EXTRA, BEACON_STATUS_OFF);
+                break;
+            case BEACON_STATUS_SCANNING:
+                broadcastIntent.putExtra(BEACON_SERVICE_STATUS_CHANGE_EXTRA, BEACON_STATUS_SCANNING);
+                break;
+            case BEACON_STATUS_FAST_SCANNING:
+                broadcastIntent.putExtra(BEACON_SERVICE_STATUS_CHANGE_EXTRA, BEACON_STATUS_FAST_SCANNING);
+                break;
+            case BEACON_STATUS_NOT_SCANNING:
+                broadcastIntent.putExtra(BEACON_SERVICE_STATUS_CHANGE_EXTRA, BEACON_STATUS_NOT_SCANNING);
+                break;
+        }
+        sendBroadcast(broadcastIntent);
     }
 
 
@@ -280,12 +334,18 @@ public class BeaconService extends Service {
             inFastScanMode = true;
         }
         if (scanToggle) {
+            if (inFastScanMode) {
+                sendStatusBroadcast(BEACON_STATUS_FAST_SCANNING);
+            } else {
+                sendStatusBroadcast(BEACON_STATUS_SCANNING);
+            }
             if (LOG_ENABLED)Log.d(LOG_TAG, "scanning toggle true");
             isScanning = true;
             scanToggle = false;
             bluetoothAdapter.startLeScan(scanCallback);
             scanHandler.postDelayed(scanRunnable, scanTime);
         } else {
+            sendStatusBroadcast(BEACON_STATUS_NOT_SCANNING);
             if (LOG_ENABLED)Log.d(LOG_TAG, "scanning toggle false");
             isScanning = false;
             scanToggle = true;

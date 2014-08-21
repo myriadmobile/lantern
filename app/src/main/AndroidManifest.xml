@@ -17,6 +17,7 @@
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="beacon_detected_receiver_action"/>
                 <action android:name="beacon_expiration_receiver_action"/>
+                <action android:name="beacon_service_status_action"/>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

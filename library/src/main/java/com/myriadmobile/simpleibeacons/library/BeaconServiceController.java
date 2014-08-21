@@ -95,6 +95,6 @@ public class BeaconServiceController {
         }
         Intent stopService = new Intent(context, BeaconService.class);
         context.stopService(stopService);
-    };
+    }
 
 }

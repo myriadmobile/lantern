@@ -35,11 +35,16 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.util.Log;
+import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.Switch;
+import android.widget.TextView;
 
 import com.myriadmobile.simpleibeacons.library.Beacon;
 import com.myriadmobile.simpleibeacons.library.BeaconService;
 import com.myriadmobile.simpleibeacons.library.BeaconServiceController;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +72,21 @@ public class MainActivity extends Activity {
      */
     private BeaconReceiver receiver;
 
+    /**
+     * The receiver for service status changes.
+     */
+    private ServiceStatusReceiver statusReceiver;
+
+    /**
+     * Textview to show user the status of the service.
+     */
+    private TextView scanningStatus;
+
+    /**
+     * Switch to allow user to turn on and off the scanning service.
+     */
+    private Switch scanToggle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,22 +95,39 @@ public class MainActivity extends Activity {
         beacons = new ArrayList<Beacon>();
         listView = (ListView)findViewById(R.id.listview);
 
-
         adapter = new BeaconAdapter(this, R.layout.beacon_item, beacons);
         listView.setAdapter(adapter);
 
-        receiver = new BeaconReceiver();
+        scanningStatus = (TextView)findViewById(R.id.tv_status);
+        scanToggle = (Switch)findViewById(R.id.swtScan);
 
+        // Create the receivers to catch broadcasts from the service.
+        receiver = new BeaconReceiver();
+        statusReceiver = new ServiceStatusReceiver();
+
+        // Create the intent filters to get only the broadcasts from the service.
         IntentFilter intentFilter = new IntentFilter(BeaconService.BEACON_DETECTED_RECEIVER_ACTION);
         intentFilter.addAction(BeaconService.BEACON_EXPIRATION_RECEIVER_ACTION);
+        IntentFilter statusIntentFilter = new IntentFilter(BeaconService.BEACON_SERVICE_STATUS_ACTION);
 
+        // Register the receivers for the service.
+        registerReceiver(statusReceiver, statusIntentFilter);
         registerReceiver(receiver, intentFilter);
 
-
-        BeaconServiceController.startBeaconService(this, 20000, 60000, 5000, 5000, null);
+        scanToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean on) {
+                if (on) {
+                    // Start the service.
+                    BeaconServiceController.startBeaconService(MainActivity.this, 20000, 60000, 5000, 5000, null);
+                } else {
+                    // Stop the service.
+                    BeaconServiceController.stopBeaconService(MainActivity.this);
+                }
+            }
+        });
 
     }
-
 
     /**
      * Unregister receivers and stops beacon service.
@@ -100,6 +137,7 @@ public class MainActivity extends Activity {
         super.onDestroy();
         BeaconServiceController.stopBeaconService(this);
         unregisterReceiver(receiver);
+        unregisterReceiver(statusReceiver);
     }
 
     /**
@@ -112,7 +150,6 @@ public class MainActivity extends Activity {
         public void onReceive(Context context, Intent intent) {
             Bundle extras = intent.getExtras();
             if (extras != null) {
-
                 if (intent.getAction() == BeaconService.BEACON_DETECTED_RECEIVER_ACTION) {
                     Beacon beacon = extras.getParcelable(BeaconService.BEACON_RECEIVER_EXTRA);
                     if (beacons.contains(beacon)) {
@@ -121,17 +158,45 @@ public class MainActivity extends Activity {
                         adapter.notifyDataSetChanged();
                     } else {
                         beacons.add(beacon);
-
                     }
                     adapter.notifyDataSetChanged();
-
-
                 } else if (intent.getAction() == BeaconService.BEACON_EXPIRATION_RECEIVER_ACTION) {
                     Beacon beacon = extras.getParcelable(BeaconService.BEACON_RECEIVER_EXTRA);
                     if (beacons.contains(beacon)) {
                         beacons.remove(beacon);
                         adapter.notifyDataSetChanged();
                     }
+                }
+            }
+        }
+    }
+
+    /**
+     * Receives status changes from the service.
+     * Displays the current status in the status textview.
+     */
+    public class ServiceStatusReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle extras = intent.getExtras();
+            if (extras != null) {
+                if (intent.getAction() == BeaconService.BEACON_SERVICE_STATUS_ACTION) {
+                    int beaconStatus = extras.getInt(BeaconService.BEACON_SERVICE_STATUS_CHANGE_EXTRA);
+                        switch (beaconStatus) {
+                            case BeaconService.BEACON_STATUS_OFF:
+                                scanningStatus.setText("Service Off");
+                                break;
+                            case BeaconService.BEACON_STATUS_SCANNING:
+                                scanningStatus.setText("Service Scanning");
+                                break;
+                            case BeaconService.BEACON_STATUS_FAST_SCANNING:
+                                scanningStatus.setText("Service Fast Scanning");
+                                break;
+                            case BeaconService.BEACON_STATUS_NOT_SCANNING:
+                                scanningStatus.setText("Service Not Scanning");
+                                break;
+                        }
                 }
             }
         }
