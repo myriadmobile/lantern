@@ -146,6 +146,7 @@ In order to be notified when the beacon scan service status has changed,
 a broadcast receiver must be registered, and listening for the action `BeaconService.BEACON_SERVICE_STATUS_ACTION` . 
 When the broadcast receiver has been called, the the status code can be retrieved with the 
 the tag `BeaconService.BEACON_SERVICE_STATUS_CHANGE_EXTRA` . That code can be compared with the following constants:
+
 `BeaconService.BEACON_STATUS_OFF` - The service has been turned off.
 `BeaconService.BEACON_STATUS_SCANNING` - The service is in normal scan mode.
 `BeaconService.BEACON_STATUS_FAST_SCANNING` - The service is in fast scan mode.
