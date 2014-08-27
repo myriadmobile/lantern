@@ -1,7 +1,7 @@
-simple-ibeacon
+Lantern
 ==============
 
-A simple iBeacon wrapper library for Android (due for a name change)
+A simple iBeacon wrapper library for Android
 
 
 Configuration
