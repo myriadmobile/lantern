@@ -1,4 +1,4 @@
-Lantern
+![Lantern](https://github.com/myriadmobile/lantern/raw/master/res/lantern_banner.png)
 ==============
 
 A simple iBeacon wrapper library for Android
@@ -7,7 +7,7 @@ A simple iBeacon wrapper library for Android
 Configuration
 -------------
 
-The parameters for starting a scan are as follows: 
+The parameters for starting a scan are as follows:
 
 Context `context` : Context from the app.
 
@@ -25,7 +25,7 @@ then all beacons will be broadcast.
 How To Use
 ----------
 
-To start scanning for beacon call `BeaconServiceController.startBeaconService(context, scanInterval, expirationInterval, scanTime, fastScanInterval, uuidFilter)` for example: 
+To start scanning for beacon call `BeaconServiceController.startBeaconService(context, scanInterval, expirationInterval, scanTime, fastScanInterval, uuidFilter)` for example:
 
 ```java
 public class MyActivity extends Activity {
@@ -38,7 +38,7 @@ public class MyActivity extends Activity {
 }
 ```
 
-If `BeaconServiceController.startBeaconService` is called more than once in an app, 
+If `BeaconServiceController.startBeaconService` is called more than once in an app,
 the service will stop and restart. NO pending beacon expiration broadcasts will be sent
 if the service is stopped.
 
@@ -46,7 +46,7 @@ If bluetooth is not enabled when the service is started, it will automatically s
 
 The service will continue to scan until the device reboots, or `BeaconServiceController.stopBeaconService(context)` is called.
 
-To stop the service call `BeaconServiceController.stopBeaconService` for example: 
+To stop the service call `BeaconServiceController.stopBeaconService` for example:
 ```java
 public class MyActivity extends Activity {
     @Override
@@ -71,7 +71,7 @@ Getting Detected Beacon Results
 -------------------------------
 
 In order to be notified when a beacon has been detected, a broadcast receiver must be registered,
-and listening for the action `BeaconService.BEACON_DETECTED_RECEIVER_ACTION` . 
+and listening for the action `BeaconService.BEACON_DETECTED_RECEIVER_ACTION` .
 When the broadcast receiver has been called, the beacon object can be retrieved from the extras in the intent.
 The tag to get the beacon is `BeaconService.BEACON_RECEIVER_EXTRA` . The broadcast for a beacon will be sent every
 time the beacon’s RSSI is changed, which indicates that the distance of the beacon has been changed,
@@ -98,7 +98,7 @@ public class BeaconReceiver extends BroadcastReceiver {
             if (intent.getAction() == BeaconService.BEACON_DETECTED_RECEIVER_ACTION) {
                 Beacon beacon = extras.getParcelable(BeaconService.BEACON_RECEIVER_EXTRA);
                 // Do something.
-            } 
+            }
         }
     }
 }
@@ -108,8 +108,8 @@ Getting Expired Beacon Results
 ------------------------------
 
 In order to be notified when a beacon has expired, a broadcast receiver must be registered,
-and listening for the action `BeaconService.BEACON_EXPIRATION_RECEIVER_ACTION` . 
-When the broadcast receiver has been called, the beacon object can be retrieved from the extras in the intent. 
+and listening for the action `BeaconService.BEACON_EXPIRATION_RECEIVER_ACTION` .
+When the broadcast receiver has been called, the beacon object can be retrieved from the extras in the intent.
 The tag to get the beacon is `BeaconService.BEACON_RECEIVER_EXTRA` .
 
 Example of obtaining a beacon expiration from scan results:
@@ -133,7 +133,7 @@ public class BeaconExpirationReceiver extends BroadcastReceiver {
             if (intent.getAction() == BeaconService.BEACON_EXPIRATION_RECEIVER_ACTION) {
                 Beacon beacon = extras.getParcelable(BeaconService.BEACON_RECEIVER_EXTRA);
                 // Do something.
-            } 
+            }
         }
     }
 }
@@ -143,8 +143,8 @@ Getting Service Status Changes
 -------------------------------
 
 In order to be notified when the beacon scan service status has changed,
-a broadcast receiver must be registered, and listening for the action `BeaconService.BEACON_SERVICE_STATUS_ACTION` . 
-When the broadcast receiver has been called, the the status code can be retrieved with the 
+a broadcast receiver must be registered, and listening for the action `BeaconService.BEACON_SERVICE_STATUS_ACTION` .
+When the broadcast receiver has been called, the the status code can be retrieved with the
 the tag `BeaconService.BEACON_SERVICE_STATUS_CHANGE_EXTRA` . That code can be compared with the following constants:
 
 `BeaconService.BEACON_STATUS_OFF` - The service has been turned off.
@@ -192,3 +192,4 @@ public class ServiceStatusReceiver extends BroadcastReceiver {
         }
     }
 ```
+![Lantern](https://github.com/myriadmobile/lantern/raw/master/res/lantern.png)
