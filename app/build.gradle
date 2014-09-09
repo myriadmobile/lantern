@@ -5,7 +5,7 @@ android {
     buildToolsVersion "19.1.0"
 
     defaultConfig {
-        applicationId "com.myriadmobile.simpleibeacon"
+        applicationId "com.myriadmobile.library.lantern.example"
         minSdkVersion 18
         targetSdkVersion 20
         versionCode 1

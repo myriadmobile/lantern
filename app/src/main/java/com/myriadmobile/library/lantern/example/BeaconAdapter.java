@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.myriadmobile.simpleibeacon;
+package com.myriadmobile.library.lantern.example;
 
 
 import android.app.Activity;
@@ -34,7 +34,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 
-import com.myriadmobile.simpleibeacons.library.Beacon;
+import com.myriadmobile.library.lantern.Beacon;
 
 import java.util.List;
 

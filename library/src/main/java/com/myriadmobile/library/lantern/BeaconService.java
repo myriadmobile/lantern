@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.myriadmobile.simpleibeacons.library;
+package com.myriadmobile.library.lantern;
 
 
 import android.app.AlarmManager;
@@ -59,32 +59,32 @@ public class BeaconService extends Service {
     /**
      * Tag for detected beacon broadcast.
      */
-    public static final String BEACON_DETECTED_RECEIVER_ACTION = "beacon_detected_receiver_action";
+    public static final String BEACON_DETECTED_RECEIVER_ACTION = "com.myriadmobile.library.lantern.beacon_detected_receiver_action";
 
     /**
      * Tag for expired beacon broadcast.
      */
-    private static final String BEACON_EXPIRATION_RECEIVER_PRIVATE = "beacon_expiration_receiver_action_private";
+    private static final String BEACON_EXPIRATION_RECEIVER_PRIVATE = "com.myriadmobile.library.lantern.beacon_expiration_receiver_action_private";
 
     /**
      * Tag for expired beacon broadcast.
      */
-    public static final String BEACON_EXPIRATION_RECEIVER_ACTION = "beacon_expiration_receiver_action";
+    public static final String BEACON_EXPIRATION_RECEIVER_ACTION = "com.myriadmobile.library.lantern.beacon_expiration_receiver_action";
 
     /**
      * Tag for when the service status changes.
      */
-    public static final String BEACON_SERVICE_STATUS_ACTION = "beacon_service_status_action";
+    public static final String BEACON_SERVICE_STATUS_ACTION = "com.myriadmobile.library.lantern.beacon_service_status_action";
 
     /**
      * Tag to get beacon out of extras.
      */
-    public static final String BEACON_RECEIVER_EXTRA = "beacon_receiver_extra";
+    public static final String BEACON_RECEIVER_EXTRA = "com.myriadmobile.library.lantern.beacon_receiver_extra";
 
     /**
      * Tag to get beacon out of extras.
      */
-    public static final String BEACON_SERVICE_STATUS_CHANGE_EXTRA = "beacon_service_status_change_extra";
+    public static final String BEACON_SERVICE_STATUS_CHANGE_EXTRA = "com.myriadmobile.library.lantern.beacon_service_status_change_extra";
 
     /**
      * Tag for when the service is turned off status broadcast.

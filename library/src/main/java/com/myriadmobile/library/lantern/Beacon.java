@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.myriadmobile.simpleibeacons.library;
+package com.myriadmobile.library.lantern;
 
 
 import android.bluetooth.BluetoothDevice;

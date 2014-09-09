@@ -22,29 +22,24 @@
  * THE SOFTWARE.
  */
 
-package com.myriadmobile.simpleibeacon;
+package com.myriadmobile.library.lantern.example;
 
 import android.app.Activity;
 import android.os.Bundle;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Bundle;
-import android.os.Parcel;
-import android.util.Log;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.myriadmobile.simpleibeacons.library.Beacon;
-import com.myriadmobile.simpleibeacons.library.BeaconService;
-import com.myriadmobile.simpleibeacons.library.BeaconServiceController;
 
-import org.w3c.dom.Text;
+import com.myriadmobile.library.lantern.Beacon;
+import com.myriadmobile.library.lantern.BeaconService;
+import com.myriadmobile.library.lantern.BeaconServiceController;
 
 import java.util.ArrayList;
 import java.util.List;

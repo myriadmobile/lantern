@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package com.myriadmobile.simpleibeacons.library;
+package com.myriadmobile.library.lantern;
 
 
 import android.content.Context;
@@ -39,27 +39,27 @@ public class BeaconServiceController {
     /**
      * Tag for scan interval pref.
      */
-    public static final String SCAN_INTERVAL_PREF = "com.myriadmobile.simpleibeacons.scan_interval";
+    public static final String SCAN_INTERVAL_PREF = "com.myriadmobile.library.lantern.scan_interval";
 
     /**
      * Tag for scan time pref.
      */
-    public static final String SCAN_TIME_PREF = "com.myriadmobile.simpleibeacons.scan_time";
+    public static final String SCAN_TIME_PREF = "com.myriadmobile.library.lantern.scan_time";
 
     /**
      * Tag for fast scan interval pref.
      */
-    public static final String FAST_SCAN_INTERVAL_PREF = "com.myriadmobile.simpleibeacons.fast_scan_interval";
+    public static final String FAST_SCAN_INTERVAL_PREF = "com.myriadmobile.library.lantern.fast_scan_interval";
 
     /**
      * Tag for expiration interval pref.
      */
-    public static final String EXPIRATION_INTERVAL_PREF = "com.myriadmobile.simpleibeacons.expiration_interval";
+    public static final String EXPIRATION_INTERVAL_PREF = "com.myriadmobile.library.lantern.expiration_interval";
 
     /**
      * Tag for beacon uuid interval pref.
      */
-    public static final String UUID_FILTER_PREF = "com.myriadmobile.simpleibeacons.uuid_filter";
+    public static final String UUID_FILTER_PREF = "com.myriadmobile.library.lantern.uuid_filter";
 
     /**
      * Starts the beacon scanning service. All time parameters are in milliseconds.

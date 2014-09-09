@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.myriadmobile.simpleibeacon">
+    package="com.myriadmobile.library.lantern.example">
 
 
     <uses-permission android:name="android.permission.BLUETOOTH" android:required="true"/>
@@ -11,13 +11,13 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.myriadmobile.simpleibeacon.MainActivity"
+            android:name="com.myriadmobile.library.lantern.example.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <action android:name="beacon_detected_receiver_action"/>
-                <action android:name="beacon_expiration_receiver_action"/>
-                <action android:name="beacon_service_status_action"/>
+                <action android:name="com.myriadmobile.library.lantern.beacon_detected_receiver_action"/>
+                <action android:name="com.myriadmobile.library.lantern.beacon_expiration_receiver_action"/>
+                <action android:name="com.myriadmobile.library.lantern.beacon_service_status_action"/>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -25,9 +25,9 @@
 
 
 
-        <service android:name="com.myriadmobile.simpleibeacons.library.BeaconService" >
+        <service android:name="com.myriadmobile.library.lantern.BeaconService" >
             <intent-filter>
-                <action android:name="beacon_expiration_receiver_action_private"/>
+                <action android:name="com.myriadmobile.library.lantern.beacon_expiration_receiver_action_private"/>
             </intent-filter>
         </service>
 
