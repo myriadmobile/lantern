@@ -95,7 +95,7 @@ public class BeaconReceiver extends BroadcastReceiver {
 
         Bundle extras = intent.getExtras();
         if (extras != null) {
-            if (intent.getAction() == BeaconService.BEACON_DETECTED_RECEIVER_ACTION) {
+            if (intent.getAction().equals(BeaconService.BEACON_DETECTED_RECEIVER_ACTION)) {
                 Beacon beacon = extras.getParcelable(BeaconService.BEACON_RECEIVER_EXTRA);
                 // Do something.
             }
@@ -130,7 +130,7 @@ public class BeaconExpirationReceiver extends BroadcastReceiver {
 
         Bundle extras = intent.getExtras();
         if (extras != null) {
-            if (intent.getAction() == BeaconService.BEACON_EXPIRATION_RECEIVER_ACTION) {
+            if (intent.getAction().equals(BeaconService.BEACON_EXPIRATION_RECEIVER_ACTION)) {
                 Beacon beacon = extras.getParcelable(BeaconService.BEACON_RECEIVER_EXTRA);
                 // Do something.
             }
@@ -171,22 +171,22 @@ public class ServiceStatusReceiver extends BroadcastReceiver {
         public void onReceive(Context context, Intent intent) {
             Bundle extras = intent.getExtras();
             if (extras != null) {
-                if (intent.getAction() == BeaconService.BEACON_SERVICE_STATUS_ACTION) {
+                if (intent.getAction().equals(BeaconService.BEACON_SERVICE_STATUS_ACTION)) {
                     int beaconStatus = extras.getInt(BeaconService.BEACON_SERVICE_STATUS_CHANGE_EXTRA);
-                        switch (beaconStatus) {
-                            case BeaconService.BEACON_STATUS_OFF:
-                                // Do something.
-                                break;
-                            case BeaconService.BEACON_STATUS_SCANNING:
-                                // Do something.
-                                break;
-                            case BeaconService.BEACON_STATUS_FAST_SCANNING:
-                                // Do something.
-                                break;
-                            case BeaconService.BEACON_STATUS_NOT_SCANNING:
-                                // Do something.
-                                break;
-                        }
+                    switch (beaconStatus) {
+                        case BeaconService.BEACON_STATUS_OFF:
+                            scanningStatus.setText("Service Off");
+                            break;
+                        case BeaconService.BEACON_STATUS_SCANNING:
+                            scanningStatus.setText("Service Scanning");
+                            break;
+                        case BeaconService.BEACON_STATUS_FAST_SCANNING:
+                            scanningStatus.setText("Service Fast Scanning");
+                            break;
+                        case BeaconService.BEACON_STATUS_NOT_SCANNING:
+                            scanningStatus.setText("Service Not Scanning");
+                            break;
+                    }
                 }
             }
         }
