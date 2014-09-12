@@ -1,12 +1,14 @@
 ![Lantern](https://github.com/myriadmobile/lantern/raw/master/res/lantern_banner.png)
 ==============
-
 A simple iBeacon wrapper library for Android
 
+Introduction
+-------
 
-Configuration
--------------
+Features
+-------
 
+### Configuration
 The parameters for starting a scan are as follows:
 
 Context `context` : Context from the app.
@@ -22,9 +24,8 @@ int `fastScanInterval` : The amount of time in milliseconds etween scans while t
 String `uuidFilter` : A string that filters which beacons that are detected are broadcast. If this value is null,
 then all beacons will be broadcast.
 
-How To Use
-----------
-
+Usage
+-------
 To start scanning for beacon call `BeaconServiceController.startBeaconService(context, scanInterval, expirationInterval, scanTime, fastScanInterval, uuidFilter)` for example:
 
 ```java
@@ -58,18 +59,16 @@ public class MyActivity extends Activity {
 }
 ```
 
-How It Works
-------------
-
+Documentation
+-------
+### How it Works
 The service will scan using the input intervals, until a beacon is detected. Once a beacon is detected,
 it is considered an active beacon and the service will then scan using the fast scan interval,
 until there are no longer any active beacons.
 A beacon remains active until the expiration interval on that beacon has been reached. Every time a beacon is detected,
 it’s expiration interval is extended. Then the regular scan interval will be used until another beacon has been detected.
 
-Getting Detected Beacon Results
--------------------------------
-
+### Getting Detected Beacon Results
 In order to be notified when a beacon has been detected, a broadcast receiver must be registered,
 and listening for the action `BeaconService.BEACON_DETECTED_RECEIVER_ACTION` .
 When the broadcast receiver has been called, the beacon object can be retrieved from the extras in the intent.
@@ -95,7 +94,7 @@ public class BeaconReceiver extends BroadcastReceiver {
 
         Bundle extras = intent.getExtras();
         if (extras != null) {
-            if (intent.getAction() == BeaconService.BEACON_DETECTED_RECEIVER_ACTION) {
+            if (intent.getAction().equals(BeaconService.BEACON_DETECTED_RECEIVER_ACTION)) {
                 Beacon beacon = extras.getParcelable(BeaconService.BEACON_RECEIVER_EXTRA);
                 // Do something.
             }
@@ -104,9 +103,7 @@ public class BeaconReceiver extends BroadcastReceiver {
 }
 ```
 
-Getting Expired Beacon Results
-------------------------------
-
+### Getting Expired Beacon Results
 In order to be notified when a beacon has expired, a broadcast receiver must be registered,
 and listening for the action `BeaconService.BEACON_EXPIRATION_RECEIVER_ACTION` .
 When the broadcast receiver has been called, the beacon object can be retrieved from the extras in the intent.
@@ -130,7 +127,7 @@ public class BeaconExpirationReceiver extends BroadcastReceiver {
 
         Bundle extras = intent.getExtras();
         if (extras != null) {
-            if (intent.getAction() == BeaconService.BEACON_EXPIRATION_RECEIVER_ACTION) {
+            if (intent.getAction().equals(BeaconService.BEACON_EXPIRATION_RECEIVER_ACTION)) {
                 Beacon beacon = extras.getParcelable(BeaconService.BEACON_RECEIVER_EXTRA);
                 // Do something.
             }
@@ -139,9 +136,7 @@ public class BeaconExpirationReceiver extends BroadcastReceiver {
 }
 ```
 
-Getting Service Status Changes
--------------------------------
-
+### Getting Service Status Changes
 In order to be notified when the beacon scan service status has changed,
 a broadcast receiver must be registered, and listening for the action `BeaconService.BEACON_SERVICE_STATUS_ACTION` .
 When the broadcast receiver has been called, the the status code can be retrieved with the
@@ -171,34 +166,59 @@ public class ServiceStatusReceiver extends BroadcastReceiver {
         public void onReceive(Context context, Intent intent) {
             Bundle extras = intent.getExtras();
             if (extras != null) {
-                if (intent.getAction() == BeaconService.BEACON_SERVICE_STATUS_ACTION) {
+                if (intent.getAction().equals(BeaconService.BEACON_SERVICE_STATUS_ACTION)) {
                     int beaconStatus = extras.getInt(BeaconService.BEACON_SERVICE_STATUS_CHANGE_EXTRA);
-                        switch (beaconStatus) {
-                            case BeaconService.BEACON_STATUS_OFF:
-                                // Do something.
-                                break;
-                            case BeaconService.BEACON_STATUS_SCANNING:
-                                // Do something.
-                                break;
-                            case BeaconService.BEACON_STATUS_FAST_SCANNING:
-                                // Do something.
-                                break;
-                            case BeaconService.BEACON_STATUS_NOT_SCANNING:
-                                // Do something.
-                                break;
-                        }
+                    switch (beaconStatus) {
+                        case BeaconService.BEACON_STATUS_OFF:
+                            scanningStatus.setText("Service Off");
+                            break;
+                        case BeaconService.BEACON_STATUS_SCANNING:
+                            scanningStatus.setText("Service Scanning");
+                            break;
+                        case BeaconService.BEACON_STATUS_FAST_SCANNING:
+                            scanningStatus.setText("Service Fast Scanning");
+                            break;
+                        case BeaconService.BEACON_STATUS_NOT_SCANNING:
+                            scanningStatus.setText("Service Not Scanning");
+                            break;
+                    }
                 }
             }
         }
     }
 ```
+
+Dependencies
+-------
+Currently, this is not available elsewhere. You'll need to work some crafty Git magic or copy & paste the project in order to take advantage of it.
+
+Roadmap
+-------
+
+Bugs and Feedback
+-------
+Have you found a bug? We'd sincerely appreciate an issue opened with as much detail as possible about the problem. Additionally, if you have a rad idea for a feature, tweak, or configurable aspect, create an issue! We'd love to hear from you. Fair warning: we may not agree the feature or tweak is a rad idea and close the issue, in which case you should maintain your own fork with your own changes.
+
+Contributors
+-------
+### Lead
+[louie2107](https://github.com/louie2107)
+
+Would you like to contribute? Fork us and send a pull request! Be sure to checkout our issues first.
+
+FAQ
+-------
+> Why Lantern?
+
+iBeacons are kinda like laterns, and this simplifies... something. It's just a name, man!
+
 ![Lantern](https://github.com/myriadmobile/lantern/raw/master/res/lantern.png)
 
 License
 --------
 The MIT License (MIT)
 
-Copyright (c) 2014 Myriad Mobile
+Copyright (c) 2014 Myriad Mobile, www.myriadmobile.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
