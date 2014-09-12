@@ -272,9 +272,12 @@ public class BeaconService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-
-        unregisterReceiver(expirationReceiver);
-        bluetoothAdapter.stopLeScan(scanCallback);
+        if (expirationReceiver != null) {
+            unregisterReceiver(expirationReceiver);
+        }
+        if (bluetoothAdapter != null) {
+            bluetoothAdapter.stopLeScan(scanCallback);
+        }
         scanHandler.removeCallbacksAndMessages(null);
         sendStatusBroadcast(BEACON_STATUS_OFF);
     }

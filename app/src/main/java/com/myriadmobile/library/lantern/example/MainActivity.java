@@ -129,8 +129,12 @@ public class MainActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         BeaconServiceController.stopBeaconService(this);
-        unregisterReceiver(receiver);
-        unregisterReceiver(statusReceiver);
+        if (receiver != null) {
+            unregisterReceiver(receiver);
+        }
+        if (statusReceiver != null) {
+            unregisterReceiver(statusReceiver);
+        }
     }
 
     /**
@@ -178,6 +182,7 @@ public class MainActivity extends Activity {
                     int beaconStatus = extras.getInt(BeaconService.BEACON_SERVICE_STATUS_CHANGE_EXTRA);
                     switch (beaconStatus) {
                         case BeaconService.BEACON_STATUS_OFF:
+                            scanToggle.setChecked(false);
                             scanningStatus.setText(getString(R.string.off));
                             break;
                         case BeaconService.BEACON_STATUS_SCANNING:
