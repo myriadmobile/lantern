@@ -25,17 +25,15 @@
 package com.myriadmobile.library.lantern.example;
 
 import android.app.Activity;
-import android.os.Bundle;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Bundle;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
-
 
 import com.myriadmobile.library.lantern.Beacon;
 import com.myriadmobile.library.lantern.BeaconService;
@@ -88,7 +86,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         beacons = new ArrayList<Beacon>();
-        listView = (ListView)findViewById(R.id.listview);
+        listView = (ListView)findViewById(R.id.lv_beacons);
 
         adapter = new BeaconAdapter(this, R.layout.beacon_item, beacons);
         listView.setAdapter(adapter);
@@ -145,7 +143,7 @@ public class MainActivity extends Activity {
         public void onReceive(Context context, Intent intent) {
             Bundle extras = intent.getExtras();
             if (extras != null) {
-                if (intent.getAction() == BeaconService.BEACON_DETECTED_RECEIVER_ACTION) {
+                if (intent.getAction().equals(BeaconService.BEACON_DETECTED_RECEIVER_ACTION)) {
                     Beacon beacon = extras.getParcelable(BeaconService.BEACON_RECEIVER_EXTRA);
                     if (beacons.contains(beacon)) {
                         beacons.remove(beacon);
@@ -155,7 +153,7 @@ public class MainActivity extends Activity {
                         beacons.add(beacon);
                     }
                     adapter.notifyDataSetChanged();
-                } else if (intent.getAction() == BeaconService.BEACON_EXPIRATION_RECEIVER_ACTION) {
+                } else if (intent.getAction().equals(BeaconService.BEACON_EXPIRATION_RECEIVER_ACTION)) {
                     Beacon beacon = extras.getParcelable(BeaconService.BEACON_RECEIVER_EXTRA);
                     if (beacons.contains(beacon)) {
                         beacons.remove(beacon);
@@ -176,22 +174,22 @@ public class MainActivity extends Activity {
         public void onReceive(Context context, Intent intent) {
             Bundle extras = intent.getExtras();
             if (extras != null) {
-                if (intent.getAction() == BeaconService.BEACON_SERVICE_STATUS_ACTION) {
+                if (intent.getAction().equals(BeaconService.BEACON_SERVICE_STATUS_ACTION)) {
                     int beaconStatus = extras.getInt(BeaconService.BEACON_SERVICE_STATUS_CHANGE_EXTRA);
-                        switch (beaconStatus) {
-                            case BeaconService.BEACON_STATUS_OFF:
-                                scanningStatus.setText("Service Off");
-                                break;
-                            case BeaconService.BEACON_STATUS_SCANNING:
-                                scanningStatus.setText("Service Scanning");
-                                break;
-                            case BeaconService.BEACON_STATUS_FAST_SCANNING:
-                                scanningStatus.setText("Service Fast Scanning");
-                                break;
-                            case BeaconService.BEACON_STATUS_NOT_SCANNING:
-                                scanningStatus.setText("Service Not Scanning");
-                                break;
-                        }
+                    switch (beaconStatus) {
+                        case BeaconService.BEACON_STATUS_OFF:
+                            scanningStatus.setText(getString(R.string.off));
+                            break;
+                        case BeaconService.BEACON_STATUS_SCANNING:
+                            scanningStatus.setText(R.string.scanning);
+                            break;
+                        case BeaconService.BEACON_STATUS_FAST_SCANNING:
+                            scanningStatus.setText(R.string.fast_scanning);
+                            break;
+                        case BeaconService.BEACON_STATUS_NOT_SCANNING:
+                            scanningStatus.setText(R.string.not_scanning);
+                            break;
+                    }
                 }
             }
         }

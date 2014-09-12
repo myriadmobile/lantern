@@ -40,23 +40,23 @@
         android:layout_gravity="center_horizontal">
 
         <Switch
+            android:id="@+id/swtScan"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Scanning"
-            android:id="@+id/swtScan"
+            android:text="@string/scan_toggle"
             android:checked="false" />
 
         <TextView
+            android:text="@string/off"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Service Off"
             android:id="@+id/tv_status" />
     </LinearLayout>
 
     <ListView
-        android:id="@+id/listview"
+        android:id="@+id/lv_beacons"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></ListView>
+        android:layout_height="match_parent"/>
 
 </LinearLayout>

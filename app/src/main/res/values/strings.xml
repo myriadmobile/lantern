@@ -1,3 +1,16 @@
 <resources>
-    <string name="app_name">Simple iBeacon</string>
+    <string name="app_name">Lantern</string>
+    <string name="scanning">Service Mode: Scanning</string>
+    <string name="not_scanning">Service Mode: Scan Pause Interval</string>
+    <string name="fast_scanning">Service Mode: Fast Scanning</string>
+    <string name="off">Service Mode: Service Off</string>
+    <string name="scan_toggle">Activate / Deactivate Scanning</string>
+
+    <string name="mac">"Mac: "</string>
+    <string name="uuid">"UUID: "</string>
+    <string name="proximity">"Proximity: "</string>
+    <string name="minor">"Minor: "</string>
+    <string name="major">"Major: "</string>
+    <string name="rssi">"RSSI: "</string>
+    <string name="expiration">"Expiration Time: "</string>
 </resources>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="beacon_far">#eca9b7</color>
+    <color name="beacon_near">#94e7d5</color>
+    <color name="beacon_immediate">#a6e794</color>
+    <color name="beacon_unkown">#e794a6</color>
+
+</resources>

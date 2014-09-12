@@ -99,6 +99,15 @@ public class Beacon implements Parcelable {
      */
     private String bluetoothAddress;
 
+    private long expirationTime;
+
+    public long getExpirationTime() {
+        return expirationTime;
+    }
+
+    public void setExpirationTime(long expirationTime) {
+        this.expirationTime = expirationTime;
+    }
 
     public static char[] getHexArray() {
         return hexArray;
@@ -288,7 +297,7 @@ public class Beacon implements Parcelable {
         int startByte = 2;
         boolean patternFound = false;
         while (startByte <= 5) {
-            if (((int)scanData[startByte+2] & 0xff) == 0x02 && ((int)scanData[startByte+3] & 0xff) == 0x15) {
+            if (((int) scanData[startByte + 2] & 0xff) == 0x02 && ((int) scanData[startByte + 3] & 0xff) == 0x15) {
                 patternFound = true;
                 break;
             }
@@ -302,27 +311,27 @@ public class Beacon implements Parcelable {
 
         Beacon iBeacon = new Beacon();
 
-        iBeacon.major = (scanData[startByte+20] & 0xff) * 0x100 + (scanData[startByte+21] & 0xff);
-        iBeacon.minor = (scanData[startByte+22] & 0xff) * 0x100 + (scanData[startByte+23] & 0xff);
-        iBeacon.txPower = (int)scanData[startByte+24]; // this one is signed
+        iBeacon.major = (scanData[startByte + 20] & 0xff) * 0x100 + (scanData[startByte + 21] & 0xff);
+        iBeacon.minor = (scanData[startByte + 22] & 0xff) * 0x100 + (scanData[startByte + 23] & 0xff);
+        iBeacon.txPower = (int) scanData[startByte + 24]; // this one is signed
         iBeacon.rssi = rssi;
         iBeacon.distance = calculateDistance(iBeacon.txPower, iBeacon.rssi);
         iBeacon.proximity = calculateProximity(calculateDistance(iBeacon.txPower, iBeacon.rssi));
 
 
         byte[] proximityUuidBytes = new byte[16];
-        System.arraycopy(scanData, startByte+4, proximityUuidBytes, 0, 16);
+        System.arraycopy(scanData, startByte + 4, proximityUuidBytes, 0, 16);
         String hexString = bytesToHex(proximityUuidBytes);
         StringBuilder sb = new StringBuilder();
-        sb.append(hexString.substring(0,8));
+        sb.append(hexString.substring(0, 8));
         sb.append("-");
-        sb.append(hexString.substring(8,12));
+        sb.append(hexString.substring(8, 12));
         sb.append("-");
-        sb.append(hexString.substring(12,16));
+        sb.append(hexString.substring(12, 16));
         sb.append("-");
-        sb.append(hexString.substring(16,20));
+        sb.append(hexString.substring(16, 20));
         sb.append("-");
-        sb.append(hexString.substring(20,32));
+        sb.append(hexString.substring(20, 32));
         iBeacon.uuid = sb.toString();
 
         if (device != null) {
@@ -332,55 +341,57 @@ public class Beacon implements Parcelable {
         return iBeacon;
     }
 
-
-    protected Beacon(Parcel in) {
-        uuid = in.readString();
-        major = in.readInt();
-        minor = in.readInt();
-        proximity = in.readByte() == 0x00 ? null : in.readInt();
-        distance = in.readByte() == 0x00 ? null : in.readDouble();
-        rssi = in.readInt();
-        txPower = in.readInt();
-        bluetoothAddress = in.readString();
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(uuid);
-        dest.writeInt(major);
-        dest.writeInt(minor);
-        if (proximity == null) {
-            dest.writeByte((byte) (0x00));
-        } else {
-            dest.writeByte((byte) (0x01));
-            dest.writeInt(proximity);
-        }
-        if (distance == null) {
-            dest.writeByte((byte) (0x00));
-        } else {
-            dest.writeByte((byte) (0x01));
-            dest.writeDouble(distance);
-        }
-        dest.writeInt(rssi);
-        dest.writeInt(txPower);
-        dest.writeString(bluetoothAddress);
-    }
-
-    @SuppressWarnings("unused")
-    public static final Creator<Beacon> CREATOR = new Creator<Beacon>() {
-        @Override
-        public Beacon createFromParcel(Parcel in) {
-            return new Beacon(in);
+        protected Beacon(Parcel in) {
+            uuid = in.readString();
+            major = in.readInt();
+            minor = in.readInt();
+            proximity = in.readByte() == 0x00 ? null : in.readInt();
+            distance = in.readByte() == 0x00 ? null : in.readDouble();
+            rssi = in.readInt();
+            txPower = in.readInt();
+            bluetoothAddress = in.readString();
+            expirationTime = in.readLong();
         }
 
         @Override
-        public Beacon[] newArray(int size) {
-            return new Beacon[size];
+        public int describeContents() {
+            return 0;
         }
-    };
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(uuid);
+            dest.writeInt(major);
+            dest.writeInt(minor);
+            if (proximity == null) {
+                dest.writeByte((byte) (0x00));
+            } else {
+                dest.writeByte((byte) (0x01));
+                dest.writeInt(proximity);
+            }
+            if (distance == null) {
+                dest.writeByte((byte) (0x00));
+            } else {
+                dest.writeByte((byte) (0x01));
+                dest.writeDouble(distance);
+            }
+            dest.writeInt(rssi);
+            dest.writeInt(txPower);
+            dest.writeString(bluetoothAddress);
+            dest.writeLong(expirationTime);
+        }
+
+        @SuppressWarnings("unused")
+        public static final Parcelable.Creator<Beacon> CREATOR = new Parcelable.Creator<Beacon>() {
+            @Override
+            public Beacon createFromParcel(Parcel in) {
+                return new Beacon(in);
+            }
+
+            @Override
+            public Beacon[] newArray(int size) {
+                return new Beacon[size];
+            }
+        };
+
 }

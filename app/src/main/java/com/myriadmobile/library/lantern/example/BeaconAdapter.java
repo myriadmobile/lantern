@@ -31,21 +31,25 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-
 
 import com.myriadmobile.library.lantern.Beacon;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 
 /**
- * Created by lumis on 8/15/2014.
+ * Adapter to show the users beacons that have been detected.
  */
 public class BeaconAdapter  extends BaseAdapter {
 
     private List<Beacon> data;
     private Context context;
     private int layoutResourceId;
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm a");
+
 
     public BeaconAdapter(Context context, int layoutResourceId, List<Beacon> data) {
         this.context = context;
@@ -81,35 +85,59 @@ public class BeaconAdapter  extends BaseAdapter {
             holder = new ViewHolder();
 
 
-            holder.mac = (TextView)convertView.findViewById(R.id.tv_beacon_mac);
-            holder.distance = (TextView)convertView.findViewById(R.id.beacon_distance);
-            holder.uuid = (TextView)convertView.findViewById(R.id.tv_beacon_uuid);
-            holder.minor = (TextView)convertView.findViewById(R.id.beacon_minor);
-            holder.major = (TextView)convertView.findViewById(R.id.beacon_major);
-            holder.rssi = (TextView)convertView.findViewById(R.id.beacon_rssi);
+            holder.tvMac = (TextView)convertView.findViewById(R.id.tv_beacon_mac);
+            holder.tvDistance = (TextView)convertView.findViewById(R.id.tv_beacon_distance);
+            holder.tvUuid = (TextView)convertView.findViewById(R.id.tv_beacon_uuid);
+            holder.tvMinor = (TextView)convertView.findViewById(R.id.tv_beacon_minor);
+            holder.tvMajor = (TextView)convertView.findViewById(R.id.tv_beacon_major);
+            holder.tvRssi = (TextView)convertView.findViewById(R.id.tv_beacon_rssi);
+            holder.tvExpiration = (TextView)convertView.findViewById(R.id.tv_beacon_expiration);
+            holder.linearRoot = (LinearLayout)convertView.findViewById(R.id.lnr_beacon_root);
 
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.mac.setText("Mac: " + beacon.getBluetoothAddress());
-        holder.uuid.setText("UUID: " + beacon.getUuid());
-        holder.distance.setText("Promimity: " + Beacon.proximityToString(beacon.getProximity()));
-        holder.minor.setText("Minor: " + beacon.getMinor());
-        holder.major.setText("Major: " + beacon.getMajor());
-        holder.rssi.setText("RSSI: " + beacon.getRssi());
+        Calendar expireTime = Calendar.getInstance();
+
+        expireTime.setTimeInMillis(beacon.getExpirationTime());
+
+        holder.tvMac.setText(context.getString(R.string.mac) + beacon.getBluetoothAddress());
+        holder.tvUuid.setText(context.getString(R.string.uuid) + beacon.getUuid());
+        holder.tvDistance.setText(context.getString(R.string.proximity) + Beacon.proximityToString(beacon.getProximity()));
+        holder.tvMinor.setText(context.getString(R.string.minor) + beacon.getMinor());
+        holder.tvMajor.setText(context.getString(R.string.major) + beacon.getMajor());
+        holder.tvRssi.setText(context.getString(R.string.rssi) + beacon.getRssi());
+        holder.tvExpiration.setText(context.getString(R.string.expiration) + simpleDateFormat.format(expireTime.getTime()));
+
+        switch (beacon.getProximity()) {
+            case Beacon.PROXIMITY_UNKNOWN:
+                holder.linearRoot.setBackgroundColor(context.getResources().getColor(R.color.beacon_unkown));
+                break;
+            case Beacon.PROXIMITY_FAR:
+                holder.linearRoot.setBackgroundColor(context.getResources().getColor(R.color.beacon_far ));
+                break;
+            case Beacon.PROXIMITY_NEAR:
+                holder.linearRoot.setBackgroundColor(context.getResources().getColor(R.color.beacon_near));
+                break;
+            case Beacon.PROXIMITY_IMMEDIATE:
+                holder.linearRoot.setBackgroundColor(context.getResources().getColor(R.color.beacon_immediate));
+                break;
+        }
 
         return convertView;
     }
 
     private static class ViewHolder {
-        TextView mac;
-        TextView uuid;
-        TextView distance;
-        TextView minor;
-        TextView major;
-        TextView rssi;
+        LinearLayout linearRoot;
+        TextView tvMac;
+        TextView tvUuid;
+        TextView tvDistance;
+        TextView tvMinor;
+        TextView tvMajor;
+        TextView tvRssi;
+        TextView tvExpiration;
     }
 
 
