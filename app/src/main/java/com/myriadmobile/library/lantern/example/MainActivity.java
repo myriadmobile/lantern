@@ -183,7 +183,7 @@ public class MainActivity extends Activity {
                     switch (beaconStatus) {
                         case BeaconService.BEACON_STATUS_OFF:
                             scanToggle.setChecked(false);
-                            scanningStatus.setText(getString(R.string.off));
+                            scanningStatus.setText(R.string.off);
                             break;
                         case BeaconService.BEACON_STATUS_SCANNING:
                             scanningStatus.setText(R.string.scanning);
