@@ -1,9 +1,10 @@
 ![Lantern](https://github.com/myriadmobile/lantern/raw/master/res/lantern_banner.png)
 ==============
-A simple iBeacon wrapper library for Android
 
 Introduction
 -------
+A simple iBeacon wrapper library for Android.
+
 
 Features
 -------
@@ -194,6 +195,7 @@ Currently, this is not available elsewhere. You'll need to work some crafty Git 
 
 Roadmap
 -------
+
 
 Bugs and Feedback
 -------
