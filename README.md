@@ -12,18 +12,14 @@ Features
 ### Configuration
 The parameters for starting a scan are as follows:
 
-Context `context` : Context from the app.
-
-int `scanInterval` : The amount of time in milliseconds between scans when no beacons have been detected.
-
-int `expirationInterval` : The amount of time in milliseconds a beacon will remain active since the last time it was detected.
-
-int `scanTime` : The amount of time in milliseconds a scan will take.
-
-int `fastScanInterval` : The amount of time in milliseconds etween scans while there is an active beacon.
-
-String `uuidFilter` : A string that filters which beacons that are detected are broadcast. If this value is null,
-then all beacons will be broadcast.
+| Type      | Name                 | Description                                                                          |
+| :--:      | :------------------- | :----------------------------------------------------------------------------------- |
+| Context   | `context`            | Context from the app.                                                                |
+| int       | `scanInterval`       | The amount of time in milliseconds between scans when no beacons have been detected. |
+| int       | `expirationInterval` | The amount of time in milliseconds a beacon will remain active since the last time it was detected. |
+| int       | `scanTime`           | The amount of time in milliseconds a scan will take.                                 |
+| int       | `fastScanInterval`   | The amount of time in milliseconds between scans while there is an active beacon.    |
+| String    | `uuidFilter`         | A string that filters which beacons that are detected are broadcast. If this value is null, then all beacons will be broadcast. |
 
 Usage
 -------
@@ -212,7 +208,7 @@ FAQ
 -------
 > Why Lantern?
 
-iBeacons are kinda like laterns, and this simplifies... something. It's just a name, man!
+iBeacons are kinda like lanterns, and this simplifies... something. It's just a name, man!
 
 ![Lantern](https://github.com/myriadmobile/lantern/raw/master/res/lantern.png)
 
