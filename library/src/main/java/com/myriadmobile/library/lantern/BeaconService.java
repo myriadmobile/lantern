@@ -41,7 +41,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Parcel;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -122,7 +121,7 @@ public class BeaconService extends Service {
     private BluetoothAdapter.LeScanCallback scanCallback;
 
     /**
-     * Whether the serivce is currently scanning for beacons.
+     * Whether the service is currently scanning for beacons.
      */
     private boolean isScanning;
 
@@ -254,13 +253,14 @@ public class BeaconService extends Service {
 
     /**
      * Obtains the bluetooth adapter from the system.
+     *
      * @return The systems default bluetooth adapter.
      */
     private BluetoothAdapter getBluetoothAdapter() {
         final BluetoothManager bluetoothManager =
                 (BluetoothManager) this.getApplicationContext().getSystemService(Context.BLUETOOTH_SERVICE);
         bluetoothAdapter = bluetoothManager.getAdapter();
-        if(bluetoothAdapter.isEnabled()) {
+        if (bluetoothAdapter.isEnabled()) {
             return bluetoothAdapter;
         }
         return null;
@@ -289,6 +289,7 @@ public class BeaconService extends Service {
 
     /**
      * Sends a broadcast with the status of the service.
+     *
      * @param broadcastType The status of the service.
      */
     private void sendStatusBroadcast(int broadcastType) {
@@ -346,6 +347,7 @@ public class BeaconService extends Service {
 
     /**
      * Sends a broadcast with the beacon that was detected.
+     *
      * @param beacon The beacons to be sent in the broadcast.
      */
     private void sendDetectedBeaconBroadcast(Beacon beacon) {
@@ -361,6 +363,7 @@ public class BeaconService extends Service {
     /**
      * Sets an alarm for a beacon expiration broadcast to be sent, an amount of time in the future
      * that the expiration time is set.
+     *
      * @param beacon The beacon to be sent during the expiration broadcast.
      */
     private void setupBeaconExpiration(Beacon beacon) {

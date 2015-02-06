@@ -31,7 +31,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 /**
- * Class that is used to intiate and deactivate the beacon scanning service.
+ * Class that is used to initiate and deactivate the beacon scanning service.
  * Should be called and passed a BeaconConfig object along with context.
  */
 public class BeaconServiceController {
@@ -63,12 +63,13 @@ public class BeaconServiceController {
 
     /**
      * Starts the beacon scanning service. All time parameters are in milliseconds.
-     * @param context Context of from the app.
-     * @param scanInterval The interval between scans when there are no active beacons.
+     *
+     * @param context            Context of from the app.
+     * @param scanInterval       The interval between scans when there are no active beacons.
      * @param expirationInterval The time it takes for an active beacon to expire.
-     * @param scanTime The amount of time the scan takes.
-     * @param fastScanInterval The interval between scans when there are active beacons.
-     * @param uuidFilter The uuid to filter broadcasts. If null send all broadcasts.
+     * @param scanTime           The amount of time the scan takes.
+     * @param fastScanInterval   The interval between scans when there are active beacons.
+     * @param uuidFilter         The UUID to filter broadcasts. If null send all broadcasts.
      */
     public static void startBeaconService(Context context, int scanInterval, int expirationInterval, int scanTime, int fastScanInterval, String uuidFilter) {
         if (context == null) {
@@ -87,10 +88,11 @@ public class BeaconServiceController {
 
     /**
      * Stops the beacon scan service.
+     *
      * @param context The context from the app.
      */
-    public static void stopBeaconService(Context context){
-        if(context == null) {
+    public static void stopBeaconService(Context context) {
+        if (context == null) {
             throw new IllegalArgumentException("Context cannot be null");
         }
         Intent stopService = new Intent(context, BeaconService.class);
