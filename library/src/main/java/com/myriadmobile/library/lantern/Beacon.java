@@ -117,76 +117,32 @@ public class Beacon implements Parcelable {
         return expirationTime;
     }
 
-    public void setExpirationTime(long expirationTime) {
-        this.expirationTime = expirationTime;
-    }
-
-    public static char[] getHexArray() {
-        return hexArray;
-    }
-
     public String getUuid() {
         return uuid;
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
     }
 
     public int getMajor() {
         return major;
     }
 
-    public void setMajor(int major) {
-        this.major = major;
-    }
-
     public int getMinor() {
         return minor;
-    }
-
-    public void setMinor(int minor) {
-        this.minor = minor;
     }
 
     public Integer getProximity() {
         return proximity;
     }
 
-    public void setProximity(Integer proximity) {
-        this.proximity = proximity;
-    }
-
-    public Double getDistance() {
-        return distance;
-    }
-
-    public void setDistance(Double distance) {
-        this.distance = distance;
-    }
-
     public int getRssi() {
         return rssi;
-    }
-
-    public void setRssi(int rssi) {
-        this.rssi = rssi;
-    }
-
-    public int getTxPower() {
-        return txPower;
-    }
-
-    public void setTxPower(int txPower) {
-        this.txPower = txPower;
     }
 
     public String getBluetoothAddress() {
         return bluetoothAddress;
     }
 
-    public void setBluetoothAddress(String bluetoothAddress) {
-        this.bluetoothAddress = bluetoothAddress;
+    protected void setExpirationTime(long expirationTime) {
+        this.expirationTime = expirationTime;
     }
 
     @Override
