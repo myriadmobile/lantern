@@ -101,6 +101,18 @@ public class Beacon implements Parcelable {
 
     private long expirationTime;
 
+    public Beacon() {
+
+    }
+
+    public Beacon(String uuid, int major, int minor, int txPower, int rssi) {
+        this.uuid = uuid.toLowerCase();
+        this.major = major;
+        this.minor = minor;
+        this.rssi = rssi;
+        this.txPower = txPower;
+    }
+
     public long getExpirationTime() {
         return expirationTime;
     }
@@ -175,19 +187,6 @@ public class Beacon implements Parcelable {
 
     public void setBluetoothAddress(String bluetoothAddress) {
         this.bluetoothAddress = bluetoothAddress;
-    }
-
-
-    Beacon(String uuid, int major, int minor, int txPower, int rssi) {
-        this.uuid = uuid.toLowerCase();
-        this.major = major;
-        this.minor = minor;
-        this.rssi = rssi;
-        this.txPower = txPower;
-    }
-
-    Beacon() {
-
     }
 
     @Override
