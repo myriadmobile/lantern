@@ -228,23 +228,6 @@ public class Beacon implements Parcelable {
 
 
     /**
-     * Converts bytes to hex.
-     *
-     * @param bytes The bytes to be converted.
-     * @return The hex that was converted from the bytes.
-     */
-    private static String bytesToHex(byte[] bytes) {
-        char[] hexChars = new char[bytes.length * 2];
-        int v;
-        for (int j = 0; j < bytes.length; j++) {
-            v = bytes[j] & 0xFF;
-            hexChars[j * 2] = hexArray[v >>> 4];
-            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
-        }
-        return new String(hexChars);
-    }
-
-    /**
      * Returns a beacon object from the data obtained from a low energy scan.
      *
      * @param rssi     The RSSI of the beacon.
@@ -298,6 +281,23 @@ public class Beacon implements Parcelable {
         }
 
         return iBeacon;
+    }
+
+    /**
+     * Converts bytes to hex.
+     *
+     * @param bytes The bytes to be converted.
+     * @return The hex that was converted from the bytes.
+     */
+    private static String bytesToHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        int v;
+        for (int j = 0; j < bytes.length; j++) {
+            v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars);
     }
 
     protected Beacon(Parcel in) {
