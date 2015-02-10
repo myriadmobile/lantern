@@ -25,6 +25,7 @@
 package com.myriadmobile.library.lantern;
 
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -34,7 +35,6 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
-import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
 import android.content.BroadcastReceiver;
@@ -49,7 +49,6 @@ import android.os.IBinder;
 import android.os.Parcel;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -129,6 +128,11 @@ public class BeaconService extends Service {
      */
     private BluetoothAdapter.LeScanCallback scanCallback;
 
+    /*
+    * Callback when a bluetooth LE devices is detected, for API level 21+
+    */
+    private ScanCallback lollipopScanCallback;
+
     /**
      * Whether the service is currently scanning for beacons.
      */
@@ -190,6 +194,12 @@ public class BeaconService extends Service {
     private ExpirationReceiver expirationReceiver;
 
 
+    private boolean isNewApi;
+    BluetoothLeScanner scanner;
+    ScanSettings settings;
+
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onCreate() {
         super.onCreate();
@@ -202,6 +212,9 @@ public class BeaconService extends Service {
         scanTime = prefs.getInt(BeaconServiceController.SCAN_TIME_PREF, 5000);
         uuidFilter = prefs.getString(BeaconServiceController.UUID_FILTER_PREF, null);
 
+        if (Build.VERSION.SDK_INT >= 21) {
+            isNewApi = true;
+        }
 
         scanHandler = new Handler();
         scanRunnable = new Runnable() {
@@ -215,7 +228,6 @@ public class BeaconService extends Service {
             @Override
             public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
 
-                Log.v("auto", "BeaconService > onLeScan() > Called!");
                 // Try to make a beacon object, if it comes back null,
                 // then it is not a beacon, so do nothing.
                 Beacon temp = Beacon.fromScanData(scanRecord, rssi, device);
@@ -244,48 +256,92 @@ public class BeaconService extends Service {
                 }
             }
         };
+        if (isNewApi) {
+            lollipopScanCallback = new ScanCallback() {
+                /**
+                 * Callback when a BLE advertisement has been found.
+                 *
+                 * @param callbackType Determines how this callback was triggered. Currently could only be
+                 *                     {@link android.bluetooth.le.ScanSettings#CALLBACK_TYPE_ALL_MATCHES}.
+                 * @param result       A Bluetooth LE scan result.
+                 */
+                @Override
+                public void onScanResult(int callbackType, ScanResult result) {
+                    super.onScanResult(callbackType, result);
+                    Log.i("auto", "BeaconService > onScanResult() > result!");
+                    Beacon temp = Beacon.fromScanData(result.getScanRecord().getBytes(), result.getRssi(), result.getDevice());
+                    if (temp != null) {
+                        Log.v("auto", "BeaconService > onScanResult() > Wooooo!!!");
+                        // Check if there is a uuid filter, if there isn't continue,
+                        // if there is and it matches the beacon, continue.
+                        if (uuidFilter == null || (uuidFilter.equals(temp.getUuid()))) {
+
+                            // Set the beacons expiration time.
+                            temp.setExpirationTime(Calendar.getInstance().getTimeInMillis() + expirationInterval);
+
+                            // Check if the beacon is active, if not make it active.
+                            if (!detectedBeacons.contains(temp)) {
+                                detectedBeacons.add(temp);
+                                sendDetectedBeaconBroadcast(temp);
+                            }
+                            // Check if the beacon is active, if it is check if the distance has changed.
+                            // If so, update it and send a new broadcast.
+                            else if (detectedBeacons.contains(temp) && result.getRssi() != detectedBeacons.get(detectedBeacons.indexOf(temp)).getRssi()) {
+                                detectedBeacons.remove(temp);
+                                detectedBeacons.add(temp);
+                                sendDetectedBeaconBroadcast(temp);
+                            }
+                            setupBeaconExpiration(temp);
+                        }
+                    } else {
+                        Log.i("auto", "BeaconService > onScanResult() > Temp is null, not an iBeacon");
+                    }
+                }
+
+                /**
+                 * Callback when scan could not be started.
+                 *
+                 * @param errorCode Error code (one of SCAN_FAILED_*) for scan failure.
+                 */
+                @Override
+                public void onScanFailed(int errorCode) {
+                    super.onScanFailed(errorCode);
+                    Log.e("auto", "BeaconService > onScanFailed() > Failed!");
+                    switch (errorCode) {
+                        case 0:
+                            Log.e("auto", "BeaconService > onScanFailed() > Error 0");
+                            break;
+                        case 1:
+                            Log.e("auto", "BeaconService > onScanFailed() > GATT error (1)");
+                            break;
+                        case 2:
+                            Log.e("auto", "BeaconService > onScanFailed() > Error 2 : ");
+                            break;
+                        case 3:
+                            Log.e("auto", "BeaconService > onScanFailed() > Error 3");
+                            break;
+                    }
+                }
+            };
+        }
 
         // Check if bluetooth is active, if not, stop the service.
         bluetoothAdapter = getBluetoothAdapter();
         if (bluetoothAdapter != null) {
-            if(Build.VERSION.SDK_INT >= 21) {
-                BluetoothLeScanner scanner = bluetoothAdapter.getBluetoothLeScanner();
-                ScanSettings settings = new ScanSettings.Builder()
-                        .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
-                        .build();
-                List<ScanFilter> filters = new ArrayList<ScanFilter>();
-                scanner.startScan(null, settings, new ScanCallback() {
-                    /**
-                     * Callback when a BLE advertisement has been found.
-                     *
-                     * @param callbackType Determines how this callback was triggered. Currently could only be
-                     *                     {@link android.bluetooth.le.ScanSettings#CALLBACK_TYPE_ALL_MATCHES}.
-                     * @param result       A Bluetooth LE scan result.
-                     */
-                    @Override
-                    public void onScanResult(int callbackType, ScanResult result) {
-                        super.onScanResult(callbackType, result);
-                        Log.i("auto", "BeaconService > onScanResult() > result!");
-                    }
-
-                    @Override
-                    public void onScanFailed(int errorCode) {
-                        super.onScanFailed(errorCode);
-                        switch (errorCode) {
-                            case 1:
-                                Log.e("auto", "BeaconService > onScanFailed() > Device does not support BTLE");
-                                break;
-                        }
-                    }
-                });
-            } else {
             detectedBeacons = new ArrayList<Beacon>();
             expirationReceiver = new ExpirationReceiver();
             IntentFilter intentFilter = new IntentFilter(BeaconService.BEACON_DETECTED_RECEIVER_ACTION);
             intentFilter.addAction(BeaconService.BEACON_EXPIRATION_RECEIVER_PRIVATE);
             registerReceiver(expirationReceiver, intentFilter);
-            scanForBeacons();
+            if (Build.VERSION.SDK_INT >= 21) {
+                isNewApi = true;
+                scanner = bluetoothAdapter.getBluetoothLeScanner();
+                settings = new ScanSettings.Builder()
+                        .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+                        .build();
+//                List<ScanFilter> filters = new ArrayList<ScanFilter>();
             }
+            scanForBeacons();
         } else {
             stopSelf();
         }
@@ -309,6 +365,7 @@ public class BeaconService extends Service {
     /**
      * Called when service is destroyed and stop all scanning.
      */
+    @SuppressLint("NewApi")
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -316,7 +373,11 @@ public class BeaconService extends Service {
             unregisterReceiver(expirationReceiver);
         }
         if (bluetoothAdapter != null) {
-            bluetoothAdapter.stopLeScan(scanCallback);
+            if (isNewApi) {
+                scanner.stopScan(lollipopScanCallback);
+            } else {
+                bluetoothAdapter.stopLeScan(scanCallback);
+            }
         }
         scanHandler.removeCallbacksAndMessages(null);
         sendStatusBroadcast(BEACON_STATUS_OFF);
@@ -356,6 +417,7 @@ public class BeaconService extends Service {
     /**
      * Scans for beacons. Either it is scanning, or waiting to scan.
      */
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void scanForBeacons() {
         if (detectedBeacons.size() == 0) {
             inFastScanMode = false;
@@ -370,13 +432,21 @@ public class BeaconService extends Service {
             }
             isScanning = true;
             scanToggle = false;
-            bluetoothAdapter.startLeScan(scanCallback);
+            if (isNewApi) {
+                scanner.startScan(null, settings, lollipopScanCallback);
+            } else {
+                bluetoothAdapter.startLeScan(scanCallback);
+            }
             scanHandler.postDelayed(scanRunnable, scanTime);
         } else {
             sendStatusBroadcast(BEACON_STATUS_NOT_SCANNING);
             isScanning = false;
             scanToggle = true;
-            bluetoothAdapter.stopLeScan(scanCallback);
+            if (isNewApi) {
+                scanner.stopScan(lollipopScanCallback);
+            } else {
+                bluetoothAdapter.stopLeScan(scanCallback);
+            }
             if (inFastScanMode) {
                 scanHandler.postDelayed(scanRunnable, fastScanInterval);
             } else {
@@ -423,9 +493,9 @@ public class BeaconService extends Service {
     }
 
     /**
-     * Receives expiration broadcasta and sends them to the host app.
-     * This is a helper recevier that allows the beacon to be put into a bundle,
-     * since there would be an error if the alarmmanager tried to send it.
+     * Receives expiration broadcast and sends them to the host app.
+     * This is a helper receiver that allows the beacon to be put into a bundle,
+     * since there would be an error if the AlarmManager tried to send it.
      */
     private class ExpirationReceiver extends BroadcastReceiver {
         @Override
