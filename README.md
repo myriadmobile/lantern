@@ -44,12 +44,12 @@ If bluetooth is not enabled when the service is started, it will automatically s
 
 The service will continue to scan until the device reboots, or `BeaconServiceController.stopBeaconService(context)` is called.
 
-To stop the service call `BeaconServiceController.stopBeaconService` for example:
+To stop the service call `BeaconServiceController.stopBeaconService`. `onDestroy` is a great place for this.
 ```java
 public class MyActivity extends Activity {
     @Override
-    public void onCreate() {
-        super.onCreate();
+    public void onDestroy() {
+        super.onDestroy();
 
         BeaconServiceController.stopBeaconService(this);
     }
