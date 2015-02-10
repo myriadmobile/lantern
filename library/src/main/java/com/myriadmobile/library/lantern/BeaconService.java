@@ -25,22 +25,31 @@
 package com.myriadmobile.library.lantern;
 
 
+import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
+import android.bluetooth.le.BluetoothLeScanner;
+import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanFilter;
+import android.bluetooth.le.ScanResult;
+import android.bluetooth.le.ScanSettings;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Parcel;
 import android.preference.PreferenceManager;
+import android.util.Log;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -201,12 +210,12 @@ public class BeaconService extends Service {
                 scanForBeacons();
             }
         };
-
         // Callback that is called when the scan find something.
         scanCallback = new BluetoothAdapter.LeScanCallback() {
             @Override
             public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
 
+                Log.v("auto", "BeaconService > onLeScan() > Called!");
                 // Try to make a beacon object, if it comes back null,
                 // then it is not a beacon, so do nothing.
                 Beacon temp = Beacon.fromScanData(scanRecord, rssi, device);
@@ -239,16 +248,47 @@ public class BeaconService extends Service {
         // Check if bluetooth is active, if not, stop the service.
         bluetoothAdapter = getBluetoothAdapter();
         if (bluetoothAdapter != null) {
+            if(Build.VERSION.SDK_INT >= 21) {
+                BluetoothLeScanner scanner = bluetoothAdapter.getBluetoothLeScanner();
+                ScanSettings settings = new ScanSettings.Builder()
+                        .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+                        .build();
+                List<ScanFilter> filters = new ArrayList<ScanFilter>();
+                scanner.startScan(null, settings, new ScanCallback() {
+                    /**
+                     * Callback when a BLE advertisement has been found.
+                     *
+                     * @param callbackType Determines how this callback was triggered. Currently could only be
+                     *                     {@link android.bluetooth.le.ScanSettings#CALLBACK_TYPE_ALL_MATCHES}.
+                     * @param result       A Bluetooth LE scan result.
+                     */
+                    @Override
+                    public void onScanResult(int callbackType, ScanResult result) {
+                        super.onScanResult(callbackType, result);
+                        Log.i("auto", "BeaconService > onScanResult() > result!");
+                    }
+
+                    @Override
+                    public void onScanFailed(int errorCode) {
+                        super.onScanFailed(errorCode);
+                        switch (errorCode) {
+                            case 1:
+                                Log.e("auto", "BeaconService > onScanFailed() > Device does not support BTLE");
+                                break;
+                        }
+                    }
+                });
+            } else {
             detectedBeacons = new ArrayList<Beacon>();
             expirationReceiver = new ExpirationReceiver();
             IntentFilter intentFilter = new IntentFilter(BeaconService.BEACON_DETECTED_RECEIVER_ACTION);
             intentFilter.addAction(BeaconService.BEACON_EXPIRATION_RECEIVER_PRIVATE);
             registerReceiver(expirationReceiver, intentFilter);
             scanForBeacons();
+            }
         } else {
             stopSelf();
         }
-
     }
 
     /**
