@@ -24,9 +24,6 @@ public class Lantern {
     public static final String PREF_EXPIRATION_INTERVAL = "com.myriadmobile.library.lantern.expiration_interval";
     public static final String PREF_UUID_FILTER = "com.myriadmobile.library.lantern.uuid_filter";
 
-
-    //    private Beacon beacon;
-    private BeaconService beaconService;
     private Context context;
     private BeaconType beaconType;
     private int scanInterval;
@@ -35,16 +32,6 @@ public class Lantern {
     private int fastScanInterval;
     private String[] uuidFilter;
 
-    /**
-     * Starts the beacon scanning service. All time parameters are in milliseconds.
-     * <p/>
-     * context            Context of from the app.
-     * scanInterval       The interval between scans when there are no active beacons.
-     * expirationInterval The time it takes for an active beacon to expire.
-     * scanTime           The amount of time the scan takes.
-     * fastScanInterval   The interval between scans when there are active beacons.
-     * uuidFilter         The UUID to filter broadcasts. If null send all broadcasts.
-     */
     private Lantern(Builder builder) {
         this.context = builder.context;
         this.beaconType = builder.beaconType;
