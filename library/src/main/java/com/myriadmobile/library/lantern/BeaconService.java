@@ -121,17 +121,12 @@ public class BeaconService extends Service {
     /**
      * List of currently active beacons.
      */
-    private List<Beacon> detectedBeacons;
+    private List<IBeacon> detectedBeacons;
 
     /**
      * Callback when a bluetooth low energy device is detected.
      */
     private BluetoothAdapter.LeScanCallback scanCallback;
-
-    /*
-    * Callback when a bluetooth LE devices is detected, for API level 21+
-    */
-    private ScanCallback lollipopScanCallback;
 
     /**
      * Whether the service is currently scanning for beacons.
@@ -194,10 +189,10 @@ public class BeaconService extends Service {
     private ExpirationReceiver expirationReceiver;
 
 
+    private ScanCallback lollipopScanCallback;
     private boolean isNewApi;
     BluetoothLeScanner scanner;
     ScanSettings settings;
-
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -206,11 +201,11 @@ public class BeaconService extends Service {
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-        scanInterval = prefs.getInt(BeaconServiceController.SCAN_INTERVAL_PREF, 20000);
-        expirationInterval = prefs.getInt(BeaconServiceController.EXPIRATION_INTERVAL_PREF, 60000);
-        fastScanInterval = prefs.getInt(BeaconServiceController.FAST_SCAN_INTERVAL_PREF, 5000);
-        scanTime = prefs.getInt(BeaconServiceController.SCAN_TIME_PREF, 5000);
-        uuidFilter = prefs.getString(BeaconServiceController.UUID_FILTER_PREF, null);
+        scanInterval = prefs.getInt(Lantern.PREF_SCAN_INTERVAL, 20000);
+        expirationInterval = prefs.getInt(Lantern.PREF_EXPIRATION_INTERVAL, 60000);
+        fastScanInterval = prefs.getInt(Lantern.PREF_FAST_SCAN_INTERVAL, 5000);
+        scanTime = prefs.getInt(Lantern.PREF_SCAN_TIME, 5000);
+        uuidFilter = prefs.getString(Lantern.PREF_UUID_FILTER, null);
 
         if (Build.VERSION.SDK_INT >= 21) {
             isNewApi = true;
@@ -230,7 +225,7 @@ public class BeaconService extends Service {
 
                 // Try to make a beacon object, if it comes back null,
                 // then it is not a beacon, so do nothing.
-                Beacon temp = Beacon.fromScanData(scanRecord, rssi, device);
+                IBeacon temp = IBeacon.fromScanData(scanRecord, rssi, device);
                 if (temp != null) {
                     // Check if there is a uuid filter, if there isn't continue,
                     // if there is and it matches the beacon, continue.
@@ -269,7 +264,7 @@ public class BeaconService extends Service {
                 public void onScanResult(int callbackType, ScanResult result) {
                     super.onScanResult(callbackType, result);
                     Log.i("auto", "BeaconService > onScanResult() > result!");
-                    Beacon temp = Beacon.fromScanData(result.getScanRecord().getBytes(), result.getRssi(), result.getDevice());
+                    IBeacon temp = IBeacon.fromScanData(result.getScanRecord().getBytes(), result.getRssi(), result.getDevice());
                     if (temp != null) {
                         Log.v("auto", "BeaconService > onScanResult() > Wooooo!!!");
                         // Check if there is a uuid filter, if there isn't continue,
@@ -328,7 +323,7 @@ public class BeaconService extends Service {
         // Check if bluetooth is active, if not, stop the service.
         bluetoothAdapter = getBluetoothAdapter();
         if (bluetoothAdapter != null) {
-            detectedBeacons = new ArrayList<Beacon>();
+            detectedBeacons = new ArrayList<IBeacon>();
             expirationReceiver = new ExpirationReceiver();
             IntentFilter intentFilter = new IntentFilter(BeaconService.BEACON_DETECTED_RECEIVER_ACTION);
             intentFilter.addAction(BeaconService.BEACON_EXPIRATION_RECEIVER_PRIVATE);
@@ -460,7 +455,7 @@ public class BeaconService extends Service {
      *
      * @param beacon The beacons to be sent in the broadcast.
      */
-    private void sendDetectedBeaconBroadcast(Beacon beacon) {
+    private void sendDetectedBeaconBroadcast(IBeacon beacon) {
         Intent intent = new Intent();
         Bundle extras = new Bundle();
         extras.putParcelable(BEACON_RECEIVER_EXTRA, beacon);
@@ -476,7 +471,7 @@ public class BeaconService extends Service {
      *
      * @param beacon The beacon to be sent during the expiration broadcast.
      */
-    private void setupBeaconExpiration(Beacon beacon) {
+    private void setupBeaconExpiration(IBeacon beacon) {
 
         Parcel parcel = Parcel.obtain();
         beacon.writeToParcel(parcel, 0);
@@ -505,7 +500,7 @@ public class BeaconService extends Service {
                 Parcel parcel = Parcel.obtain();
                 parcel.unmarshall(byteArrayExtra, 0, byteArrayExtra.length);
                 parcel.setDataPosition(0);
-                Beacon beacon = Beacon.CREATOR.createFromParcel(parcel);
+                IBeacon beacon = IBeacon.CREATOR.createFromParcel(parcel);
                 detectedBeacons.remove(beacon);
 
                 Bundle extras = new Bundle();
