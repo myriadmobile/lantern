@@ -34,7 +34,7 @@ import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.myriadmobile.library.lantern.Beacon;
+import com.myriadmobile.library.lantern.IBeacon;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -45,13 +45,13 @@ import java.util.List;
  */
 public class BeaconAdapter  extends BaseAdapter {
 
-    private List<Beacon> data;
+    private List<IBeacon> data;
     private Context context;
     private int layoutResourceId;
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm a");
 
 
-    public BeaconAdapter(Context context, int layoutResourceId, List<Beacon> data) {
+    public BeaconAdapter(Context context, int layoutResourceId, List<IBeacon> data) {
         this.context = context;
         this.data = data;
         this.layoutResourceId = layoutResourceId;
@@ -63,7 +63,7 @@ public class BeaconAdapter  extends BaseAdapter {
     }
 
     @Override
-    public Beacon getItem(int position) {
+    public IBeacon getItem(int position) {
         return data.get(position);
     }
 
@@ -76,7 +76,7 @@ public class BeaconAdapter  extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup viewGroup) {
         final ViewHolder holder;
 
-        Beacon beacon = data.get(position);
+        IBeacon iBeacon = data.get(position);
 
         if (convertView == null) {
             LayoutInflater inflater = ((Activity) context).getLayoutInflater();
@@ -101,27 +101,27 @@ public class BeaconAdapter  extends BaseAdapter {
 
         Calendar expireTime = Calendar.getInstance();
 
-        expireTime.setTimeInMillis(beacon.getExpirationTime());
+        expireTime.setTimeInMillis(iBeacon.getExpirationTime());
 
-        holder.tvMac.setText(context.getString(R.string.mac) + beacon.getBluetoothAddress());
-        holder.tvUuid.setText(context.getString(R.string.uuid) + beacon.getUuid());
-        holder.tvDistance.setText(context.getString(R.string.proximity) + Beacon.proximityToString(beacon.getProximity()));
-        holder.tvMinor.setText(context.getString(R.string.minor) + beacon.getMinor());
-        holder.tvMajor.setText(context.getString(R.string.major) + beacon.getMajor());
-        holder.tvRssi.setText(context.getString(R.string.rssi) + beacon.getRssi());
+        holder.tvMac.setText(context.getString(R.string.mac) + iBeacon.getBluetoothAddress());
+        holder.tvUuid.setText(context.getString(R.string.uuid) + iBeacon.getUuid());
+        holder.tvDistance.setText(context.getString(R.string.proximity) + IBeacon.proximityToString(iBeacon.getProximity()));
+        holder.tvMinor.setText(context.getString(R.string.minor) + iBeacon.getMinor());
+        holder.tvMajor.setText(context.getString(R.string.major) + iBeacon.getMajor());
+        holder.tvRssi.setText(context.getString(R.string.rssi) + iBeacon.getRssi());
         holder.tvExpiration.setText(context.getString(R.string.expiration) + simpleDateFormat.format(expireTime.getTime()));
 
-        switch (beacon.getProximity()) {
-            case Beacon.PROXIMITY_UNKNOWN:
+        switch (iBeacon.getProximity()) {
+            case IBeacon.PROXIMITY_UNKNOWN:
                 holder.linearRoot.setBackgroundColor(context.getResources().getColor(R.color.beacon_unkown));
                 break;
-            case Beacon.PROXIMITY_FAR:
+            case IBeacon.PROXIMITY_FAR:
                 holder.linearRoot.setBackgroundColor(context.getResources().getColor(R.color.beacon_far ));
                 break;
-            case Beacon.PROXIMITY_NEAR:
+            case IBeacon.PROXIMITY_NEAR:
                 holder.linearRoot.setBackgroundColor(context.getResources().getColor(R.color.beacon_near));
                 break;
-            case Beacon.PROXIMITY_IMMEDIATE:
+            case IBeacon.PROXIMITY_IMMEDIATE:
                 holder.linearRoot.setBackgroundColor(context.getResources().getColor(R.color.beacon_immediate));
                 break;
         }

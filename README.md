@@ -23,35 +23,40 @@ The parameters for starting a scan are as follows:
 
 Usage
 -------
-To start scanning for beacon call `BeaconServiceController.startBeaconService(context, scanInterval, expirationInterval, scanTime, fastScanInterval, uuidFilter)` for example:
-
+To start scanning for a beacon, instantiate Lantern and use its builder class to change scanning settings. The settings listed in this example are also the default settings. Then call the startScan method. This will begin the servce.
 ```java
 public class MyActivity extends Activity {
     @Override
     public void onCreate() {
         super.onCreate();
+        Lantern lantern = new Lantern.Builder(MainActivity.this)
+            .ofType(Lantern.BeaconType.IBEACON)
+            .withScanInterval(20000)
+            .withExpirationInterval(60000)
+            .withScanTime(5000)
+            .withFastScanInterval(5000)
+            .withUuidFilter(null)
+            .build();
 
-        BeaconServiceController.startBeaconService(this, 20000, 60000, 7000, 5000, null);
+            lantern.startScan();
     }
 }
 ```
 
-If `BeaconServiceController.startBeaconService` is called more than once in an app,
+If `lantern.startScan()` is called more than once in an app,
 the service will stop and restart. NO pending beacon expiration broadcasts will be sent
 if the service is stopped.
 
 If bluetooth is not enabled when the service is started, it will automatically stop.
 
-The service will continue to scan until the device reboots, or `BeaconServiceController.stopBeaconService(context)` is called.
-
-To stop the service call `BeaconServiceController.stopBeaconService`. `onDestroy` is a great place for this.
+The service will continue to scan until the device reboots, or until `lantern.stopScan()` is called. `onDestroy` is a great place for this.
 ```java
 public class MyActivity extends Activity {
     @Override
     public void onDestroy() {
         super.onDestroy();
 
-        BeaconServiceController.stopBeaconService(this);
+        lantern.stopScan();
     }
 }
 ```

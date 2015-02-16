@@ -35,9 +35,9 @@ import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.myriadmobile.library.lantern.Beacon;
 import com.myriadmobile.library.lantern.BeaconService;
-import com.myriadmobile.library.lantern.BeaconServiceController;
+import com.myriadmobile.library.lantern.IBeacon;
+import com.myriadmobile.library.lantern.Lantern;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +53,7 @@ public class MainActivity extends Activity {
     /**
      * The list of detected beacons.
      */
-    private List<Beacon> beacons;
+    private List<IBeacon> beacons;
 
     /**
      * The adapter for the listview.
@@ -80,12 +80,22 @@ public class MainActivity extends Activity {
      */
     private Switch scanToggle;
 
+    //Create the actual Lantern object
+    final Lantern lantern = new Lantern.Builder(MainActivity.this)
+            .ofType(Lantern.BeaconType.IBEACON)
+            .withScanInterval(20000)
+            .withExpirationInterval(60000)
+            .withScanTime(5000)
+            .withFastScanInterval(5000)
+            .withUuidFilter(null)
+            .build();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        beacons = new ArrayList<Beacon>();
+        beacons = new ArrayList<IBeacon>();
         listView = (ListView)findViewById(R.id.lv_beacons);
 
         adapter = new BeaconAdapter(this, R.layout.beacon_item, beacons);
@@ -112,10 +122,10 @@ public class MainActivity extends Activity {
             public void onCheckedChanged(CompoundButton compoundButton, boolean on) {
                 if (on) {
                     // Start the service.
-                    BeaconServiceController.startBeaconService(MainActivity.this, 20000, 60000, 5000, 5000, null);
+                    lantern.startScan();
                 } else {
                     // Stop the service.
-                    BeaconServiceController.stopBeaconService(MainActivity.this);
+                    lantern.stopScan();
                 }
             }
         });
@@ -128,7 +138,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        BeaconServiceController.stopBeaconService(this);
+        lantern.stopScan();
         if (receiver != null) {
             unregisterReceiver(receiver);
         }
@@ -148,17 +158,17 @@ public class MainActivity extends Activity {
             Bundle extras = intent.getExtras();
             if (extras != null) {
                 if (intent.getAction().equals(BeaconService.BEACON_DETECTED_RECEIVER_ACTION)) {
-                    Beacon beacon = extras.getParcelable(BeaconService.BEACON_RECEIVER_EXTRA);
-                    if (beacons.contains(beacon)) {
-                        beacons.remove(beacon);
-                        beacons.add(beacon);
+                    IBeacon iBeacon = extras.getParcelable(BeaconService.BEACON_RECEIVER_EXTRA);
+                    if (beacons.contains(iBeacon)) {
+                        beacons.remove(iBeacon);
+                        beacons.add(iBeacon);
                         adapter.notifyDataSetChanged();
                     } else {
-                        beacons.add(beacon);
+                        beacons.add(iBeacon);
                     }
                     adapter.notifyDataSetChanged();
                 } else if (intent.getAction().equals(BeaconService.BEACON_EXPIRATION_RECEIVER_ACTION)) {
-                    Beacon beacon = extras.getParcelable(BeaconService.BEACON_RECEIVER_EXTRA);
+                    IBeacon beacon = extras.getParcelable(BeaconService.BEACON_RECEIVER_EXTRA);
                     if (beacons.contains(beacon)) {
                         beacons.remove(beacon);
                         adapter.notifyDataSetChanged();
@@ -199,5 +209,4 @@ public class MainActivity extends Activity {
             }
         }
     }
-
 }
