@@ -29,7 +29,7 @@ public class MyActivity extends Activity {
     @Override
     public void onCreate() {
         super.onCreate();
-        Lantern lantern = new Lantern.Builder(MainActivity.this)
+        Lantern lantern = new Lantern.Builder(this)
             .ofType(Lantern.BeaconType.IBEACON)
             .withScanInterval(20000)
             .withExpirationInterval(60000)
