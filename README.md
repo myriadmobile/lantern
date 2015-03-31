@@ -43,7 +43,7 @@ public class MyActivity extends Activity {
 }
 ```
 
-If `lantern.startScan()` is called more than once in an app,
+If `lantern.startScan()` is called more than once consecutively in an app,
 the service will stop and restart. NO pending beacon expiration broadcasts will be sent
 if the service is stopped.
 
