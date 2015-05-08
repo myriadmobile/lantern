@@ -1,5 +1,7 @@
 ![Lantern](https://github.com/myriadmobile/lantern/raw/master/res/lantern_banner.png)
 ==============
+1.0 release and Maven Central availability coming very shortly!
+
 
 Introduction
 -------
